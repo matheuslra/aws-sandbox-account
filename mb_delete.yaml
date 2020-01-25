@@ -1,0 +1,107 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: CloudFormation template for delete a Sandbox Account
+
+
+Resources:
+  VPCEfemera:
+    Type: AWS::EC2::VPC
+    Properties:
+      CidrBlock: 192.168.0.0/16
+      EnableDnsSupport: true
+      EnableDnsHostnames: true
+      Tags:
+        - Key: Name
+          Value: Sandbox-VPCEfemera
+
+  InternetGateway:
+    Type: AWS::EC2::InternetGateway
+    Properties:
+      Tags:
+        - Key: Name
+          Value: Sandbox-IGW
+
+  InternetGatewayAttachment:
+    Type: AWS::EC2::VPCGatewayAttachment
+    Properties:
+      InternetGatewayId: !Ref InternetGateway
+      VpcId: !Ref VPCEfemera
+
+  PublicSubnet1:
+    Type: AWS::EC2::Subnet
+    Properties:
+      VpcId: !Ref VPCEfemera
+      AvailabilityZone: !Select [ 0, !GetAZs '' ]
+      CidrBlock: 192.168.10.0/24
+      MapPublicIpOnLaunch: true
+      Tags:
+        - Key: Name
+          Value: Sandbox-SubnetNetEfemera
+
+  PublicRouteTable:
+    Type: AWS::EC2::RouteTable
+    Properties:
+      VpcId: !Ref VPCEfemera
+      Tags:
+        - Key: Name
+          Value: Sandbox-RouteTable
+
+  DefaultPublicRoute:
+    Type: AWS::EC2::Route
+    DependsOn: InternetGatewayAttachment
+    Properties:
+      RouteTableId: !Ref PublicRouteTable
+      DestinationCidrBlock: 0.0.0.0/0
+      GatewayId: !Ref InternetGateway
+
+  PublicSubnet1RouteTableAssociation:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      RouteTableId: !Ref PublicRouteTable
+      SubnetId: !Ref PublicSubnet1
+
+  ServerSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    DependsOn: InternetGatewayAttachment
+    Properties:
+      VpcId: !Ref VPCEfemera
+      GroupDescription: allow connections from specified CIDR ranges
+      SecurityGroupIngress:
+      - IpProtocol: tcp
+        FromPort: 22
+        ToPort: 22
+        CidrIp: 0.0.0.0/0
+
+  EC2Role:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+        - 
+          Effect: Allow
+          Principal:
+            Service:
+              - ec2.amazonaws.com
+          Action:
+              - sts:AssumeRole
+      Path: /
+      Policies:
+      -
+        PolicyName: root
+        PolicyDocument:
+          Version: '2012-10-17'
+          Statement:
+            -
+              Effect: Allow
+              Action: '*'
+              Resource: '*'
+
+  Ec2Instance: 
+    Type: AWS::EC2::Instance
+    Properties:
+      InstanceType: t3.medium 
+      ImageId: "ami-062f7200baf2fa504"
+      SubnetId: !Ref PublicSubnet1
+      IamInstanceProfile: !Ref EC2Role
+      KeyName: "Sandbox"
+      SecurityGroupsIds: [{!Ref ServerSecurityGroup}]
