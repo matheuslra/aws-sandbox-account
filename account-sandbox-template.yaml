@@ -443,23 +443,21 @@ Resources:
           phases:
             install:
               commands:
-                - apt-get install jq
-                - aws s3 cp s3://masterbuilder-account-sandbox/aws-nuke /bin/
+                - apt-get install jq zip unzip
+                - wget https://github.com/matheuslra/aws-sandbox-account/raw/master/aws-nuke.zip
+                - unzip aws-nuke.zip -d /bin/
                 - chmod +x /bin/aws-nuke
             build:
               commands:
                 - account_id=$(aws ssm get-parameter --name account_id --output text | awk '{print $6}')
-                - aws s3 cp s3://masterbuilder-account-sandbox/aws-nuke-config.yaml - | sed -e "s/000000000000/$account_id/g" > $account_id.yaml;
-                - cat $account_id.yaml;
+                - wget https://raw.githubusercontent.com/matheuslra/aws-sandbox-account/master/aws-nuke-config.yaml;
+                - sed -e "s/000000000000/$account_id/g" aws-nuke-config.yaml > $account_id.yaml;
                 - echo "Assuming Role for Account ($account_id)";
                 - curl 169.254.170.2$AWS_CONTAINER_CREDENTIALS_RELATIVE_URI  > $account_id.json;
-                - cat $account_id.json;
                 - ACCESS_KEY_ID=$(cat $account_id.json |jq -r .AccessKeyId);
                 - SECRET_ACCESS_KEY=$(cat $account_id.json |jq -r .SecretAccessKey);
                 - SESSION_TOKEN=$(cat $account_id.json |jq -r .Token);
-                - printenv;
                   # TODO: Add --no-dry-run flag for Production
-                - echo aws-nuke -c $account_id.yaml --force --access-key-id $ACCESS_KEY_ID --secret-access-key $SECRET_ACCESS_KEY --session-token $SESSION_TOKEN;
                 - aws-nuke -c $account_id.yaml --force --access-key-id "$ACCESS_KEY_ID" --secret-access-key "$SECRET_ACCESS_KEY" --session-token "$SESSION_TOKEN" |tee -a aws-nuke.log;
                 - nuke_pid=$!;
                 - wait $nuke_pid;
@@ -494,29 +492,28 @@ Resources:
           phases:
             install:
               commands:
-                - apt-get install jq
-                - aws s3 cp s3://masterbuilder-account-sandbox/aws-nuke /bin/
+                - apt-get install jq zip unzip
+                - wget https://github.com/matheuslra/aws-sandbox-account/raw/master/aws-nuke.zip
+                - unzip aws-nuke.zip -d /bin/
                 - chmod +x /bin/aws-nuke
             build:
               commands:
                 - account_id=$(aws ssm get-parameter --name account_id --output text | awk '{print $6}')
-                - aws s3 cp s3://account-sandbox-mb-dev/aws-nuke-config.yaml - | sed -e "s/000000000000/$account_id/g" > $account_id.yaml;
-                - cat $account_id.yaml;
+                - wget https://raw.githubusercontent.com/matheuslra/aws-sandbox-account/master/aws-nuke-config.yaml;
+                - sed -e "s/000000000000/$account_id/g" aws-nuke-config.yaml > $account_id.yaml;
                 - echo "Assuming Role for Account ($account_id)";
                 - curl 169.254.170.2$AWS_CONTAINER_CREDENTIALS_RELATIVE_URI  > $account_id.json;
-                - cat $account_id.json;
                 - ACCESS_KEY_ID=$(cat $account_id.json |jq -r .AccessKeyId);
                 - SECRET_ACCESS_KEY=$(cat $account_id.json |jq -r .SecretAccessKey);
                 - SESSION_TOKEN=$(cat $account_id.json |jq -r .Token);
-                - printenv;
                   # TODO: Add --no-dry-run flag for Production
-                - echo aws-nuke -c $account_id.yaml --force --no-dry-run --access-key-id $ACCESS_KEY_ID --secret-access-key $SECRET_ACCESS_KEY --session-token $SESSION_TOKEN;
-                - aws-nuke -c $account_id.yaml --no-dry-run --access-key-id "$ACCESS_KEY_ID" --secret-access-key "$SECRET_ACCESS_KEY" --session-token "$SESSION_TOKEN" |tee -a aws-nuke.log;
+                - aws-nuke -c $account_id.yaml --force --no-dry-run --access-key-id "$ACCESS_KEY_ID" --secret-access-key "$SECRET_ACCESS_KEY" --session-token "$SESSION_TOKEN" |tee -a aws-nuke.log;
                 - nuke_pid=$!;
                 - wait $nuke_pid;
                 - echo "Completed Nuke Process for all accounts"
             post_build:
               commands:
                 - aws sns publish --target-arn arn:aws:sns:us-east-1:$account_id:Sandbox-SNSTopic --message file://aws-nuke.log
+
         Type: NO_SOURCE
 
