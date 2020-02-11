@@ -35,19 +35,27 @@ accounts:
         value: "StackSet-AWSControlTowerBP-*"
       CloudTrailTrail:
       - property: Name
-        type: contains
-        value: "aws-controltower"
+        type: exact
+        value: "aws-controltower-BaselineCloudTrail"
       CloudWatchLogsLogGroup:
       - property: Name
-        type: contains
-        value: "AWSControlTowerBP"
+        type: glob
+        value: "AWSControlTowerBP*"
+      - property: Name
+        type: exact
+        value: "aws-controltower/CloudTrailLogs"
+      SNSTopic:
       - property: Name
         type: glob
         value: "aws-controltower*"
-      SNSTopic:
+      SNSSubscription:
       - property: Name
-        type: contains
-        value: "aws-controltower"
+        type: glob
+        value: "aws-controltower*"
+      CloudWatchEventsTarget:
+      - property: Name
+        type: glob
+        value: "aws-controltower*"
       ConfigServiceConfigurationRecorder:
       - property: Name
         type: contains
@@ -66,6 +74,7 @@ accounts:
       - property: Name
         type: glob
         value: "AWSReservedSSO*"
+      
         
         
         
