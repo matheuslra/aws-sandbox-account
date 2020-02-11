@@ -1,0 +1,200 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: CloudFormation template for Sandbox Account
+
+Parameters:
+  DaysForAccount:
+    Type: Number
+    Description: "Insert how many days this account will live."
+    Default: "5"
+
+  AccountIdSandbox:
+    Type: String
+    Description: "Put the Account ID of Sandbox account"
+    AllowedPattern: ".+"
+    ConstraintDescription: "Provide the account id"
+
+  AdministrationRole:
+    Description: The name of the ControlTowerStackSetRole
+    Type: String
+    Default: "arn:aws:iam::869122752574:role/service-role/AWSControlTowerStackSetRole"
+  
+  ExecutionRole:
+    Description: The name of the Role to be assumed within each account
+    Type: String
+    Default: "AWSControlTowerExecution"
+
+  StackName:
+    Description: "Stack Name"
+    Type: String
+    AllowedPattern: "^[a-zA-z0-9-]*"
+    ConstraintDescription: "Must contain only letters, numbers, dashes and start with an alpha character"
+
+  StackRegion:
+    Description: "Stack Region"
+    Default: "us-east-1"
+    Type: String
+    AllowedPattern: ".+"
+    AllowedValues: ["us-east-1","sa-east-1"]
+    ConstraintDescription: "Must be a valid AWS region"
+
+  # SourceBucket:
+  #   Description: "Bucket holding the baseline template file"
+  #   Type: String
+  #   Default: masterbuilder-account-sandbox
+
+  # AccountSandboxTemplate:
+  #   Description: "Account Sandbox Template File Name"
+  #   Type: String
+  #   Default: account-sandbox-template.yaml
+
+  AddrEmail:
+    Type: String
+    Description: "Add your email for receive notifications"
+    AllowedPattern: ".+"
+    ConstraintDescription: "Must provide a valid email address" 
+
+  BudgetName:
+    Type: String
+    Description: "Add the budget name for this specific sandbox account"
+    Default: "Budget-Sandbox"
+
+  BudgetAmount:
+    Type: Number
+    Description: "Add the amount of limit for this specific sandbox account. You will receive a notification when reach 90% of this number."
+    Default: 150
+
+  
+
+Resources:
+#Create a Budget for this specific sandbox account and will trigger a notification when the value will greater than 89%
+  CreateSandboxBudget:
+    Type: AWS::Budgets::Budget
+    Properties:
+      Budget:
+        BudgetName: !Ref BudgetName
+        BudgetLimit: 
+          Amount: !Ref BudgetAmount
+          Unit: USD
+        TimeUnit: MONTHLY
+        BudgetType: COST
+        CostFilters:
+          LinkedAccount:
+            - !Ref AccountIdSandbox
+      NotificationsWithSubscribers:
+        - Notification:
+            NotificationType: ACTUAL
+            ComparisonOperator: GREATER_THAN
+            Threshold: PERCENTAGE
+            Threshold: 89            
+          Subscribers:
+            - SubscriptionType: EMAIL
+              Address: !Ref AddrEmail
+
+#Save the accound id into a SSM Parameter Store
+  AccountIdParameter:
+    Type: AWS::SSM::Parameter
+    Properties:
+      Name: account_id
+      Type: String
+      Value: !Ref AccountIdSandbox
+      Description: SSM Parameter for account id.
+      Tags:
+        Sandbox: 'Yes'
+  
+  PolictIdParameter:
+    Type: AWS::SSM::Parameter
+    Properties:
+      Name: policy_id
+      Type: String
+      Value: 1234
+      Description: SSM Parameter for policy id.
+      Tags:
+        Sandbox: 'Yes'
+
+
+#Main IAM Role for Lambda
+  LambdaRole: 
+    Type: "AWS::IAM::Role"
+    Properties: 
+      AssumeRolePolicyDocument: 
+        Version: "2012-10-17"
+        Statement: 
+            Effect: "Allow"
+            Principal: 
+              Service: 
+                - "lambda.amazonaws.com"
+            Action: 
+              - "sts:AssumeRole"
+      Path: "/"
+      Policies:
+      - PolicyName: LambdaAccessAllPolicyPolicy
+        PolicyDocument:
+          Version: '2012-10-17'
+          Statement:
+            Effect: Allow
+            Action: "*"
+            Resource: "*"
+  
+  AccountSandboxLambda:
+    Type: "AWS::Lambda::Function"
+    Properties:
+      Handler: "5-CustomworkingLambdaCode.main"
+      #Handler: "index.main"
+      Runtime: "python3.6"
+      Role: !GetAtt LambdaRole.Arn
+      Timeout: 180
+      Code:
+        S3Bucket: masterbuilder-account-sandbox
+        S3Key: "5-CustomworkingLambdaCode.zip"
+      Environment:
+        Variables:
+          'accountemail' : !Ref AddrEmail
+          'accountid' : !Ref AccountIdSandbox
+          'stackname' : !Ref StackName
+          'stackregion' : !Ref StackRegion
+          'executionrole' : !Ref ExecutionRole
+          'administrationrole': !Ref AdministrationRole
+          'sourcebucket' : masterbuilder-account-sandbox
+          'accountsandboxtemplate': account-sandbox-template.yaml
+          'accountdays': !Ref DaysForAccount
+
+  TriggerLambda:
+    Type: "Custom::TriggerLambda"
+    DependsOn: 
+      - AccountSandboxLambda
+      - LambdaRole
+    Properties:
+      ServiceToken: !GetAtt AccountSandboxLambda.Arn
+
+#Lambda Function for CreateSCP - this function deny any regional services out US-EAST-1  and SA-EAST-1
+  CreateSCP:
+    Type: AWS::Lambda::Function
+    DependsOn:
+      - LambdaRole
+    Properties:
+      Code:
+        S3Bucket: masterbuilder-account-sandbox
+        S3Key: "create-scp.zip"
+      FunctionName: CreateSCP
+      Description: "Function for Create SCP to block create new resources outside us-east-1 and sa-east-1"
+      Handler: create-scp.lambda_handler
+      Role: !GetAtt LambdaRole.Arn
+      Runtime: python3.7
+      Timeout: 300
+
+  ExecuteSCPLambdaCustom:
+    Type: 'Custom::CustomResource'
+    DependsOn:
+      - CreateSCP
+    Properties:
+      ServiceToken: !GetAtt 'CreateSCP.Arn'
+      LambdaRegion: !Ref "AWS::Region"
+      LambdaName: !Ref CreateSCP
+
+
+
+
+
+  
+
+

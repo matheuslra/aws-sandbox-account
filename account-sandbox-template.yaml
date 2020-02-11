@@ -1,0 +1,522 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: CloudFormation template for Sandbox Account
+
+Parameters:
+  AccountIdSandbox:
+    Type: String
+    Description: "Put the Account ID of Sandbox account"
+    AllowedPattern: ".+"
+    ConstraintDescription: "Provide the account id"
+
+  DaysForAccount:
+    Type: Number
+    Description: "Insert how many days this account will live."
+    Default: "5"
+
+  AddrEmail:
+    Type: String
+    Description: "Add your email for receive notifications"
+    AllowedPattern: ".+"
+    ConstraintDescription: "Must provide a valid email address" 
+
+Resources:
+#Main IAM Role for Lambda
+  LambdaRole: 
+    Type: "AWS::IAM::Role"
+    Properties: 
+      AssumeRolePolicyDocument: 
+        Version: "2012-10-17"
+        Statement: 
+            Effect: "Allow"
+            Principal: 
+              Service: 
+                - "lambda.amazonaws.com"
+            Action: 
+              - "sts:AssumeRole"
+      Path: "/"
+      Policies:
+      - PolicyName: LambdaAccessAllPolicyPolicy
+        PolicyDocument:
+          Version: '2012-10-17'
+          Statement:
+            Effect: Allow
+            Action: "*"
+            Resource: "*"
+#Save into a SSM Parameter Store how many days this sandbox account will live
+  AccountDays:
+    Type: AWS::SSM::Parameter
+    Properties:
+      Name: account_days
+      Type: String
+      Value: !Ref DaysForAccount
+      Description: SSM Parameter for account days.
+      Tags:
+        Sandbox: 'Yes'
+
+  AccountIdParameter:
+    Type: AWS::SSM::Parameter
+    Properties:
+      Name: account_id
+      Type: String
+      Value: !Ref AccountIdSandbox
+      Description: SSM Parameter for account id.
+      Tags:
+        Sandbox: 'Yes'
+
+  NotificationSNS:
+        Type: "AWS::SNS::Topic"
+        Properties:
+            DisplayName: "Sandbox-SNSTopic"
+            TopicName: "Sandbox-SNSTopic"
+  
+  SubscriptionSNS:
+        Type: AWS::SNS::Subscription
+        Properties: 
+            TopicArn: !Ref 'NotificationSNS'
+            Protocol: email
+            Endpoint: !Ref AddrEmail
+
+  #Role for StepFunction
+  RoleStepFunction:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+        - 
+          Effect: Allow
+          Principal:
+            Service:
+              - states.amazonaws.com
+          Action:
+              - sts:AssumeRole
+      Path: /
+      Policies:
+      -
+        PolicyName: root
+        PolicyDocument:
+          Version: '2012-10-17'
+          Statement:
+            -
+              Effect: Allow
+              Action:
+                - sns:*
+                - iam:*
+                - logs:*
+                - lambda:*
+                - ssm:*
+              Resource: '*'
+
+#StepFunction for monitoring days to end the account
+  StepFunctionMonitoring:
+    Type: "AWS::StepFunctions::StateMachine"
+    DependsOn:
+      - RoleStepFunction
+      - MonitoringFuction
+      - MissingDaysFunction
+      - DeleteAccount
+    Properties:
+      StateMachineName: "StepFunctionMonitoring"
+      DefinitionString: !Sub |-
+             {
+              "Comment": "A Task Timer monitoring tool",
+              "StartAt": "Trigger Lambda",
+              "States": {
+                  "Trigger Lambda":{
+                    "Type": "Task",
+                    "Resource": "arn:aws:lambda:us-east-1:732132114469:function:MonitoringFuction",
+                    "Next": "How many days?",
+                    "ResultPath": "$.MonitoringFunction"
+                  },
+                  "How many days?":{
+                    "Type": "Choice",
+                    "Choices":[{
+                      "Variable": "$.MonitoringFunction.Days",
+                      "NumericEquals": 1,
+                      "Next": "List Resources"
+                      },{
+                      "Variable": "$.MonitoringFunction.Days",
+                      "NumericLessThanEquals": 5,
+                      "Next": "MissingDays"
+                      },{
+                      "Variable": "$.MonitoringFunction.Days",
+                      "NumericEquals": 0,
+                      "Next": "Delete Account"
+                      },{
+                      "Variable": "$.MonitoringFunction.Days",
+                      "NumericGreaterThan": 5,
+                      "Next": "SuccessState"
+                      }  
+                    ]
+                    },
+                    "List Resources":{
+                      "Type": "Task",
+                      "Resource": "arn:aws:lambda:us-east-1:732132114469:function:ListResources",
+                      "End": true
+                    },
+                    "Delete Account":{
+                      "Type": "Task",
+                      "Resource": "arn:aws:lambda:us-east-1:732132114469:function:DeleteAccount",
+                      "End": true
+                    },
+                    "MissingDays":{
+                      "Type": "Task",
+                      "Resource": "arn:aws:lambda:us-east-1:732132114469:function:MissingDaysFunction",
+                      "End": true 
+                    },
+                    "SuccessState":{
+                      "Type": "Succeed"
+                    }
+                  }
+              }
+      RoleArn: !GetAtt [ RoleStepFunction, Arn ]
+
+#Lambda function for notify how many days the sandbox account will terminate
+  ListResources:
+    Type: AWS::Lambda::Function
+    DependsOn:
+      - LambdaRole
+    Properties:
+      Code:
+        ZipFile: |
+          import boto3
+          def lambda_handler(event, context):
+            client = boto3.client('codebuild')
+            response = client.start_build(
+              projectName='AccountNuker-List'
+            )
+      FunctionName: ListResources
+      Description: "Function for list all resources for aws-nuke"
+      Handler: index.lambda_handler
+      Role: !GetAtt 'LambdaRole.Arn'
+      Runtime: python3.7
+      Timeout: 300
+
+  DeleteAccount:
+    Type: AWS::Lambda::Function
+    DependsOn:
+      - LambdaRole
+    Properties:
+      Code:
+        ZipFile: |
+          import boto3
+          def lambda_handler(event, context):
+            client = boto3.client('codebuild')
+            response = client.start_build(
+              projectName='AccountNuker-Delete'
+            )
+      FunctionName: DeleteAccount
+      Description: "Function for delete the resources in aws-nuke"
+      Handler: index.lambda_handler
+      Role: !GetAtt 'LambdaRole.Arn'
+      Runtime: python3.7
+      Timeout: 300
+
+  MissingDaysFunction:
+    Type: AWS::Lambda::Function
+    DependsOn:
+      - LambdaRole
+    Properties:
+      Code:
+        ZipFile: |
+          import boto3
+          import os
+          def lambda_handler(event, context):
+            print ("lambda arn: " + context.invoked_function_arn)
+            account_id = context.invoked_function_arn.split(":")[4]
+            aws_region = os.environ['AWS_REGION']
+            ssm = boto3.client('ssm', region_name=aws_region)
+            sns = boto3.client('sns', region_name=aws_region)
+            
+            parameter = ssm.get_parameter(
+                          Name='account_days'
+                          )
+            parametervalue = parameter['Parameter']['Value']
+
+            result = sns.list_topics()
+            topics = [topic['TopicArn'] for topic in result['Topics']]
+            topic_arn = 'arn:aws:sns:'+aws_region+':'+account_id+':Sandbox-SNSTopic'
+            
+            id = ssm.get_parameter(
+                          Name='account_id'
+                          )
+            account_id = id['Parameter']['Value']
+
+            alert = sns.publish(
+              TopicArn=topic_arn,
+              Message='Falta '+ parametervalue +' para a conta '+ account_id +' ser deletada.'
+              )
+      FunctionName: MissingDaysFunction
+      Description: "Function for get missing days"
+      Handler: index.lambda_handler
+      Role: !GetAtt 'LambdaRole.Arn'
+      Runtime: python3.7
+      Timeout: 300
+
+  #Lambda function to update the days into Parameter Store
+  MonitoringFuction:
+    Type: AWS::Lambda::Function
+    DependsOn:
+      - LambdaRole
+    Properties:
+      Code:
+        ZipFile: |
+          import boto3
+          import os
+          def lambda_handler(event, context):
+            print ("lambda arn: " + context.invoked_function_arn)
+            account_id = context.invoked_function_arn.split(":")[4]
+            aws_region = os.environ['AWS_REGION']
+
+            client = boto3.client('ssm', region_name=aws_region)
+            sns = boto3.client('sns',region_name=aws_region)
+            days = client.get_parameter(
+                Name='account_days'
+              )
+  
+            account_days_value = days['Parameter']['Value']
+            update_days = int(account_days_value)-1
+  
+            put_new_days = client.put_parameter(
+              Name='account_days',
+              Value=str(update_days),
+              Type='String',
+              Overwrite=True
+              )
+            
+            result = sns.list_topics()
+            topics = [topic['TopicArn'] for topic in result['Topics']]
+            topic_arn = 'arn:aws:sns:'+aws_region+':'+account_id+':Sandbox-SNSTopic'
+
+            new_days = client.get_parameter(
+              Name='account_days'
+              )
+            new_days_updated = new_days['Parameter']['Value']
+
+            id = client.get_parameter(
+                          Name='account_id'
+              )
+
+            account_id = id['Parameter']['Value']  
+
+            if topic_arn in topics:
+              print(topic_arn)
+            if int(new_days_updated) <= 1:
+              alert = sns.publish(
+              TopicArn=topic_arn,
+              Message='Falta um dia para a conta '+ account_id +' ser deletada.'
+              )
+            
+            return {'Days': int(new_days_updated)}
+      FunctionName: MonitoringFuction
+      Description: "Function for Monitoring how many days the account still have."
+      Handler: index.lambda_handler
+      Role: !GetAtt 'LambdaRole.Arn'
+      Runtime: python3.7
+      Timeout: 300
+
+
+# Role for CloudWatch Event
+  CloudWatchEventRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+        - 
+          Effect: Allow
+          Principal:
+            Service:
+              - events.amazonaws.com
+          Action:
+              - sts:AssumeRole
+      Path: /
+      Policies:
+      -
+        PolicyName: CWEPolicy
+        PolicyDocument:
+          Version: '2012-10-17'
+          Statement:
+            -
+              Effect: Allow
+              Action:
+                - lambda:*
+              Resource: '*'
+
+#Lambda Function that is the trigger in CloudWatch Event, and on the executition trigger a executition of the StepFunction every day
+  ExecuteCWE:
+    Type: AWS::Lambda::Function
+    DependsOn:
+      - LambdaRole
+      - StepFunctionMonitoring
+    Properties:
+      Code:
+        ZipFile: |
+          import boto3
+          import random
+          import os
+          from datetime import datetime
+          def create_name():
+            """Helper method to generate a unique execution name"""
+            return '{}-{}'.format(datetime.now().strftime("%Y%m%d%H%M%s%f"), random.randint(0,9999))
+        
+          def lambda_handler(event, context):
+            aws_region = os.environ['AWS_REGION']
+            client = boto3.client('stepfunctions',region_name=aws_region)
+            state_machine = client.list_state_machines()
+  
+            for machine in state_machine['stateMachines']:
+                arn = machine['stateMachineArn']
+
+            response = client.start_execution(
+              stateMachineArn=arn,
+              name = create_name()
+              )
+      FunctionName: ExecuteCWE
+      Description: "Function for execute cwe"
+      Handler: index.lambda_handler
+      Role: !GetAtt 'LambdaRole.Arn'
+      Runtime: python3.7
+      Timeout: 300
+  
+  CloudWatchEvent:
+    Type: "AWS::Events::Rule"
+    DependsOn:
+      - StepFunctionMonitoring
+    Properties:
+      Description: "Scheduled trigger step function every day"
+      ScheduleExpression: "rate(1 day)"
+      State: "ENABLED"
+      Targets:
+        -
+          Arn: !GetAtt 'ExecuteCWE.Arn'
+          Id: "ExecuteCWE"
+
+  PermissionForEventsToInvokeLambda: 
+    Type: AWS::Lambda::Permission
+    Properties: 
+      FunctionName: 
+        Ref: "ExecuteCWE"
+      Action: "lambda:InvokeFunction"
+      Principal: "events.amazonaws.com"
+      SourceArn: 
+        Fn::GetAtt: 
+          - "CloudWatchEvent"
+          - "Arn"
+
+#CodeBuild for AWS-NUKE
+  NukeScriptProjectRole:
+    Type: AWS::IAM::Role
+    Properties:
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/AdministratorAccess
+      AssumeRolePolicyDocument:
+        Version: 2012-10-17
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: codebuild.amazonaws.com
+            Action: sts:AssumeRole
+
+  NukeListScriptProject:
+    Type: AWS::CodeBuild::Project
+    Properties:
+      Artifacts:
+        Type: NO_ARTIFACTS
+      BadgeEnabled: false
+      Description: Builds a container to run AWS-Nuke for an account
+      Environment:
+        ComputeType: BUILD_GENERAL1_SMALL
+        Image: aws/codebuild/docker:18.09.0
+        ImagePullCredentialsType: CODEBUILD
+        PrivilegedMode: true
+        Type: LINUX_CONTAINER
+      LogsConfig:
+        CloudWatchLogs:
+          GroupName: !Sub "AccountNuker-${AWS::StackName}"
+          Status: ENABLED
+      Name: "AccountNuker-List"
+      ServiceRole: !GetAtt NukeScriptProjectRole.Arn
+      Source:
+        BuildSpec: !Sub |
+          version: 0.2
+          phases:
+            install:
+              commands:
+                - apt-get install jq
+                - aws s3 cp s3://masterbuilder-account-sandbox/aws-nuke /bin/
+                - chmod +x /bin/aws-nuke
+            build:
+              commands:
+                - account_id=$(aws ssm get-parameter --name account_id --output text | awk '{print $6}')
+                - aws s3 cp s3://masterbuilder-account-sandbox/aws-nuke-config.yaml - | sed -e "s/000000000000/$account_id/g" > $account_id.yaml;
+                - cat $account_id.yaml;
+                - echo "Assuming Role for Account ($account_id)";
+                - curl 169.254.170.2$AWS_CONTAINER_CREDENTIALS_RELATIVE_URI  > $account_id.json;
+                - cat $account_id.json;
+                - ACCESS_KEY_ID=$(cat $account_id.json |jq -r .AccessKeyId);
+                - SECRET_ACCESS_KEY=$(cat $account_id.json |jq -r .SecretAccessKey);
+                - SESSION_TOKEN=$(cat $account_id.json |jq -r .Token);
+                - printenv;
+                  # TODO: Add --no-dry-run flag for Production
+                - echo aws-nuke -c $account_id.yaml --force --access-key-id $ACCESS_KEY_ID --secret-access-key $SECRET_ACCESS_KEY --session-token $SESSION_TOKEN;
+                - aws-nuke -c $account_id.yaml --force --access-key-id "$ACCESS_KEY_ID" --secret-access-key "$SECRET_ACCESS_KEY" --session-token "$SESSION_TOKEN" |tee -a aws-nuke.log;
+                - nuke_pid=$!;
+                - wait $nuke_pid;
+                - echo "Completed Nuke Process for all accounts"
+            post_build:
+              commands:
+                - aws sns publish --target-arn arn:aws:sns:us-east-1:$account_id:Sandbox-SNSTopic --message file://aws-nuke.log
+        Type: NO_SOURCE
+
+  NukeDeleteScriptProject:
+    Type: AWS::CodeBuild::Project
+    Properties:
+      Artifacts:
+        Type: NO_ARTIFACTS
+      BadgeEnabled: false
+      Description: Builds a container to run AWS-Nuke for an account
+      Environment:
+        ComputeType: BUILD_GENERAL1_SMALL
+        Image: aws/codebuild/docker:18.09.0
+        ImagePullCredentialsType: CODEBUILD
+        PrivilegedMode: true
+        Type: LINUX_CONTAINER
+      LogsConfig:
+        CloudWatchLogs:
+          GroupName: !Sub "AccountNuker-${AWS::StackName}"
+          Status: ENABLED
+      Name: "AccountNuker-Delete"
+      ServiceRole: !GetAtt NukeScriptProjectRole.Arn
+      Source:
+        BuildSpec: !Sub |
+          version: 0.2
+          phases:
+            install:
+              commands:
+                - apt-get install jq
+                - aws s3 cp s3://masterbuilder-account-sandbox/aws-nuke /bin/
+                - chmod +x /bin/aws-nuke
+            build:
+              commands:
+                - account_id=$(aws ssm get-parameter --name account_id --output text | awk '{print $6}')
+                - aws s3 cp s3://account-sandbox-mb-dev/aws-nuke-config.yaml - | sed -e "s/000000000000/$account_id/g" > $account_id.yaml;
+                - cat $account_id.yaml;
+                - echo "Assuming Role for Account ($account_id)";
+                - curl 169.254.170.2$AWS_CONTAINER_CREDENTIALS_RELATIVE_URI  > $account_id.json;
+                - cat $account_id.json;
+                - ACCESS_KEY_ID=$(cat $account_id.json |jq -r .AccessKeyId);
+                - SECRET_ACCESS_KEY=$(cat $account_id.json |jq -r .SecretAccessKey);
+                - SESSION_TOKEN=$(cat $account_id.json |jq -r .Token);
+                - printenv;
+                  # TODO: Add --no-dry-run flag for Production
+                - echo aws-nuke -c $account_id.yaml --force --no-dry-run --access-key-id $ACCESS_KEY_ID --secret-access-key $SECRET_ACCESS_KEY --session-token $SESSION_TOKEN;
+                - aws-nuke -c $account_id.yaml --no-dry-run --access-key-id "$ACCESS_KEY_ID" --secret-access-key "$SECRET_ACCESS_KEY" --session-token "$SESSION_TOKEN" |tee -a aws-nuke.log;
+                - nuke_pid=$!;
+                - wait $nuke_pid;
+                - echo "Completed Nuke Process for all accounts"
+            post_build:
+              commands:
+                - aws sns publish --target-arn arn:aws:sns:us-east-1:$account_id:Sandbox-SNSTopic --message file://aws-nuke.log
+        Type: NO_SOURCE
+

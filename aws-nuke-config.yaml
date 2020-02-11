@@ -1,0 +1,29 @@
+regions:
+- us-east-1
+- sa-east-1
+- global
+
+account-blacklist:
+- "869122752574" # production
+
+resource-types:
+  # don't nuke
+  excludes:
+  - EC2VPC
+  - EC2VPCEndpoint
+  - EC2Subnet
+  - EC2TGW
+  - EC2TGWAttachment
+  - EC2InternetGateway
+  - EC2InternetGatewayAttachment
+  - EC2NATGateway
+  - EC2NetworkACL
+  - EC2RouteTable
+  - EC2VPCEndpointServiceConfiguration
+  - EC2VPCPeeringConnection
+  - EC2VPNConnection
+  - EC2VPNGateway
+  - EC2VPNGatewayAttachment
+
+accounts:
+  "000000000000": {}
