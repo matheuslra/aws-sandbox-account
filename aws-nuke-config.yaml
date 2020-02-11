@@ -26,9 +26,10 @@ resource-types:
   - EC2VPNGatewayAttachment
 
 accounts:
-  "000000000000": 
-    CloudFormationStack:
-    - property: Name
-      type: glob
-      value: "StackSet-AWSControlTowerBP-*"
+  "000000000000":
+    filters: 
+      CloudFormationStack:
+      - property: Name
+        type: glob
+        value: "StackSet-AWSControlTowerBP-*"
   
