@@ -22,6 +22,7 @@ resource-types:
   - EC2VPCEndpointServiceConfiguration
   - EC2VPCPeeringConnection
   - EC2VPNConnection
+  - EC2DHCPOption
   - EC2VPNGateway
   - EC2VPNGatewayAttachment
 
@@ -32,4 +33,41 @@ accounts:
       - property: Name
         type: glob
         value: "StackSet-AWSControlTowerBP-*"
-  
+      CloudTrailTrail:
+      - property: Name
+        type: contains
+        value: "aws-controltower"
+      CloudWatchLogsLogGroup:
+      - property: Name
+        type: contains
+        value: "AWSControlTowerBP"
+      - property: Name
+        type: glob
+        value: "aws-controltower*"
+      SNSTopic:
+      - property: Name
+        type: contains
+        value: "aws-controltower"
+      ConfigServiceConfigurationRecorder:
+      - property: Name
+        type: contains
+        value: "aws-controltower-BaselineConfigRecorder"
+      ConfigServiceDeliveryChannel:
+      - property: Name
+        type: contains
+        value: "aws-controltower-BaselineConfigDeliveryChannel"
+      IAMRole:
+      - property: Name
+        type: glob
+        value: "aws-controltower*"
+      - property: Name
+        type: glob
+        value: "AWSControlTower*" 
+      - property: Name
+        type: glob
+        value: "AWSReservedSSO*"
+        
+        
+        
+        
+      
