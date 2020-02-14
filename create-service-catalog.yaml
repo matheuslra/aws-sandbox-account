@@ -1,0 +1,51 @@
+AWSTemplateFormatVersion: 2010-09-09
+Description: Create service catalog on the master account
+
+Parameters:
+  ArnRoleServiceCatalogSSO:
+    Type: String
+    Description: "Put the ARN of role ServiceCatalogEndUserAccess provide by SSO"
+    AllowedPattern: ".+"
+    ConstraintDescription: "Provide the ARN role"
+
+Resources:
+  SandboxAccountPortfolio:
+    Type: "AWS::ServiceCatalog::Portfolio"
+    Properties: 
+      DisplayName: "SandboxAccount"
+      AcceptLanguage: "en" 
+      ProviderName: "Amazon"
+
+  AccountSandbox:
+    Type: "AWS::ServiceCatalog::CloudFormationProduct"
+    Properties:
+      AcceptLanguage: "en"
+      Description: "This product builds a SCP and budget on the MASTER account and start a stack set in a Sandbox account"
+      Distributor: "Amazon"
+      Name: "Sandbox Account"
+      Owner: "IT Services"
+      SupportEmail: "support@yourcompany.com"
+      SupportUrl: "https://www.amazon.com"
+      SupportDescription: "Support Description"
+      ProvisioningArtifactParameters:
+      -
+        Description: "Feb 2020"
+        Name: "Feb 2020"
+        Info:
+          LoadTemplateFromURL : "https://raw.githubusercontent.com/matheuslra/aws-sandbox-account/master/mb-start.yaml"
+
+  AccountSandboxAssociation: 
+    Type: "AWS::ServiceCatalog::PortfolioProductAssociation"
+    Properties:
+      ProductId: !Ref AccountSandbox
+      PortfolioId: !Ref SandboxAccountPortfolio
+      
+  PrincipalAccountSandbox:
+    Type: AWS::ServiceCatalog::PortfolioPrincipalAssociation
+    Properties: 
+      AcceptLanguage: en
+      PortfolioId: !Ref SandboxAccountPortfolio
+      PrincipalARN: !Ref ArnRoleServiceCatalogSSO
+      PrincipalType: IAM
+
+

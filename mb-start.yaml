@@ -37,16 +37,6 @@ Parameters:
     AllowedValues: ["us-east-1","sa-east-1"]
     ConstraintDescription: "Must be a valid AWS region"
 
-  # SourceBucket:
-  #   Description: "Bucket holding the baseline template file"
-  #   Type: String
-  #   Default: masterbuilder-account-sandbox
-
-  # AccountSandboxTemplate:
-  #   Description: "Account Sandbox Template File Name"
-  #   Type: String
-  #   Default: account-sandbox-template.yaml
-
   AddrEmail:
     Type: String
     Description: "Add your email for receive notifications"
