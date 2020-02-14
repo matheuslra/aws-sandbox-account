@@ -23,12 +23,6 @@ Parameters:
     Type: String
     Default: "AWSControlTowerExecution"
 
-  StackName:
-    Description: "Stack Name"
-    Type: String
-    AllowedPattern: "^[a-zA-z0-9-]*"
-    ConstraintDescription: "Must contain only letters, numbers, dashes and start with an alpha character"
-
   StackRegion:
     Description: "Stack Region"
     Default: "us-east-1"
@@ -41,12 +35,7 @@ Parameters:
     Type: String
     Description: "Add your email for receive notifications"
     AllowedPattern: ".+"
-    ConstraintDescription: "Must provide a valid email address" 
-
-  BudgetName:
-    Type: String
-    Description: "Add the budget name for this specific sandbox account"
-    Default: "Budget-Sandbox"
+    ConstraintDescription: "Must provide a valid email address"
 
   BudgetAmount:
     Type: Number
@@ -61,7 +50,7 @@ Resources:
     Type: AWS::Budgets::Budget
     Properties:
       Budget:
-        BudgetName: !Ref BudgetName
+        BudgetName: "Budget-AccountSandbox-$(AWS::AccountId)"
         BudgetLimit: 
           Amount: !Ref BudgetAmount
           Unit: USD
@@ -140,7 +129,7 @@ Resources:
         Variables:
           'accountemail' : !Ref AddrEmail
           'accountid' : !Ref AccountIdSandbox
-          'stackname' : !Ref StackName
+          'stackname' : "Stack-Account-$(AWS::AccountId)"
           'stackregion' : !Ref StackRegion
           'executionrole' : !Ref ExecutionRole
           'administrationrole': !Ref AdministrationRole
