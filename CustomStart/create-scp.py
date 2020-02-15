@@ -9,7 +9,7 @@ def lambda_handler(event, context):
             logger.info('event: {}'.format(event))
             logger.info('context: {}'.format(context))
             client = boto3.client('organizations')
-            # ssm = boto3.client('ssm')
+
             logger.info('Always printing the event: {}'.format(event))
             if event["RequestType"] == "Create" or event["RequestType"] == "Update":
               try:
@@ -26,10 +26,6 @@ def lambda_handler(event, context):
                     print ("Policy already exists")
                     for i, (name, id) in enumerate(zip(denypolicyname, denypolicyid)):
                       if policy_name in name:
-                        # parameter = ssm.get_parameter(
-                        #   Name='account_id'
-                        #   )
-                        # parametervalue = parameter['Parameter']['Value']
                       
                         attach = client.attach_policy(
                             PolicyId=id,
@@ -45,18 +41,6 @@ def lambda_handler(event, context):
                       )
     
                     policy_id = policy['Policy']['PolicySummary']['Id']
-
-                    create_parameter_policy = ssm.put_parameter(
-                        Name='policy_id',
-                        Value=policy_id,
-                        Type='String',
-                        Overwrite=True
-                    )
-
-                    # parameter = ssm.get_parameter(
-                    #   Name='account_id'
-                    #   )
-                    # id = parameter['Parameter']['Value']
                   
                     attach = client.attach_policy(
                       PolicyId=policy_id,
