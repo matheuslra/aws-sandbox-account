@@ -124,7 +124,7 @@ Resources:
               "States": {
                   "Trigger Lambda":{
                     "Type": "Task",
-                    "Resource": "arn:aws:lambda:us-east-1:732132114469:function:MonitoringFuction",
+                    "Resource": "${MonitoringFuction.Arn}",
                     "Next": "How many days?",
                     "ResultPath": "$.MonitoringFunction"
                   },
@@ -151,17 +151,17 @@ Resources:
                     },
                     "List Resources":{
                       "Type": "Task",
-                      "Resource": "arn:aws:lambda:us-east-1:732132114469:function:ListResources",
+                      "Resource": "${ListResources.Arn}",
                       "End": true
                     },
                     "Delete Account":{
                       "Type": "Task",
-                      "Resource": "arn:aws:lambda:us-east-1:732132114469:function:DeleteAccount",
+                      "Resource": "${DeleteAccount.Arn}",
                       "End": true
                     },
                     "MissingDays":{
                       "Type": "Task",
-                      "Resource": "arn:aws:lambda:us-east-1:732132114469:function:MissingDaysFunction",
+                      "Resource": "${MissingDaysFunction.Arn}",
                       "End": true 
                     },
                     "SuccessState":{
