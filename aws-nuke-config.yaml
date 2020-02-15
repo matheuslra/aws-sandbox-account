@@ -25,6 +25,7 @@ resource-types:
   - EC2DHCPOption
   - EC2VPNGateway
   - EC2VPNGatewayAttachment
+  - CloudTrailTrail
 
 accounts:
   "000000000000":
@@ -33,10 +34,6 @@ accounts:
       - property: Name
         type: glob
         value: "StackSet-AWSControlTowerBP-*"
-      CloudTrailTrail:
-      - property: Name
-        type: exact
-        value: "aws-controltower-BaselineCloudTrail"
       CloudWatchLogsLogGroup:
       - property: Name
         type: glob
@@ -47,7 +44,7 @@ accounts:
       SNSTopic:
       - property: Name
         type: glob
-        value: "aws-controltower*"
+        value: "aws-controltower-*"
       SNSSubscription:
       - property: Name
         type: glob
