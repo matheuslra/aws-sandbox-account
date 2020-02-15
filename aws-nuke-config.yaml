@@ -67,7 +67,7 @@ accounts:
       IAMRole:
       - property: Name
         type: glob
-        value: "aws-controltower*"
+        value: "aws-controltower-*"
       - property: Name
         type: glob
         value: "AWSControlTower*" 
