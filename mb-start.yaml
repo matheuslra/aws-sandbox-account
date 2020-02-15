@@ -37,11 +37,24 @@ Parameters:
     AllowedPattern: ".+"
     ConstraintDescription: "Must provide a valid email address"
 
+  BudgetName:
+    Type: String
+    Description: "Insert a name for the budget for this sandbox account."
+    AllowedPattern: ".+"
+    ConstraintDescription: "Must provide a valid email address"
+
   BudgetAmount:
     Type: Number
     Description: "Add the amount of limit for this specific sandbox account. You will receive a notification when reach 90% of this number."
     Default: 150
 
+  StackName:
+    Type: String
+    Description: "Insert a name for stack that will be deploy in sandbox account"
+    AllowedPattern: ".+"
+    ConstraintDescription: "Must provide a valid email address"
+
+  
   
 
 Resources:
@@ -50,7 +63,7 @@ Resources:
     Type: AWS::Budgets::Budget
     Properties:
       Budget:
-        BudgetName: "Budget-AccountSandbox-$(AWS::AccountId)"
+        BudgetName: !Ref BudgetName
         BudgetLimit: 
           Amount: !Ref BudgetAmount
           Unit: USD
@@ -68,28 +81,6 @@ Resources:
           Subscribers:
             - SubscriptionType: EMAIL
               Address: !Ref AddrEmail
-
-#Save the accound id into a SSM Parameter Store
-  AccountIdParameter:
-    Type: AWS::SSM::Parameter
-    Properties:
-      Name: account_id
-      Type: String
-      Value: !Ref AccountIdSandbox
-      Description: SSM Parameter for account id.
-      Tags:
-        Sandbox: 'Yes'
-  
-  PolictIdParameter:
-    Type: AWS::SSM::Parameter
-    Properties:
-      Name: policy_id
-      Type: String
-      Value: 1234
-      Description: SSM Parameter for policy id.
-      Tags:
-        Sandbox: 'Yes'
-
 
 #Main IAM Role for Lambda
   LambdaRole: 
@@ -129,7 +120,7 @@ Resources:
         Variables:
           'accountemail' : !Ref AddrEmail
           'accountid' : !Ref AccountIdSandbox
-          'stackname' : "Stack-Account-$(AWS::AccountId)"
+          'stackname' : !Ref StackName
           'stackregion' : !Ref StackRegion
           'executionrole' : !Ref ExecutionRole
           'administrationrole': !Ref AdministrationRole
@@ -154,7 +145,9 @@ Resources:
       Code:
         S3Bucket: masterbuilder-account-sandbox
         S3Key: "create-scp.zip"
-      FunctionName: CreateSCP
+      Environment:
+        Variables:
+          'accountid' : !Ref AccountIdSandbox
       Description: "Function for Create SCP to block create new resources outside us-east-1 and sa-east-1"
       Handler: create-scp.lambda_handler
       Role: !GetAtt LambdaRole.Arn

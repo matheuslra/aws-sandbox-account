@@ -9,12 +9,12 @@ def lambda_handler(event, context):
             logger.info('event: {}'.format(event))
             logger.info('context: {}'.format(context))
             client = boto3.client('organizations')
-            ssm = boto3.client('ssm')
+            # ssm = boto3.client('ssm')
             logger.info('Always printing the event: {}'.format(event))
             if event["RequestType"] == "Create" or event["RequestType"] == "Update":
               try:
                   logger.info("Event Body - " + json.dumps(event))
-                  
+                  accountid = os.environ['accountid']
                   policies = client.list_policies(
                       Filter='SERVICE_CONTROL_POLICY'
                     )
@@ -26,14 +26,14 @@ def lambda_handler(event, context):
                     print ("Policy already exists")
                     for i, (name, id) in enumerate(zip(denypolicyname, denypolicyid)):
                       if policy_name in name:
-                        parameter = ssm.get_parameter(
-                          Name='account_id'
-                          )
-                        parametervalue = parameter['Parameter']['Value']
+                        # parameter = ssm.get_parameter(
+                        #   Name='account_id'
+                        #   )
+                        # parametervalue = parameter['Parameter']['Value']
                       
                         attach = client.attach_policy(
                             PolicyId=id,
-                            TargetId=parametervalue
+                            TargetId=accountid
                             )
                         print("Policy apply in account")
                   else:
@@ -53,14 +53,14 @@ def lambda_handler(event, context):
                         Overwrite=True
                     )
 
-                    parameter = ssm.get_parameter(
-                      Name='account_id'
-                      )
-                    id = parameter['Parameter']['Value']
+                    # parameter = ssm.get_parameter(
+                    #   Name='account_id'
+                    #   )
+                    # id = parameter['Parameter']['Value']
                   
                     attach = client.attach_policy(
                       PolicyId=policy_id,
-                      TargetId=id
+                      TargetId=accountid
                       )
                     print ("Policy apply sucessfully in account")
 
@@ -71,25 +71,6 @@ def lambda_handler(event, context):
                     cfnresponse.send(event, context, cfnresponse.FAILED, responseData, 'CustomResourcePhysicalID')
                     
             if event["RequestType"] == "Delete":
-                try:
-                    parameter_acc_id = ssm.get_parameter(
-                        Name='account_id'
-                      )
-                    parameter_policy = ssm.get_parameter(
-                        Name='policy_id'
-                    )
-
-                    detach = client.detach_policy(
-                      PolicyId=parameter_policy,
-                      TargetId=parameter_acc_id
-                    )
-                    
-                    delete = client.delete_policy(
-                      PolicyId=parameter_policy
-                    )
                     logger.info("Event Body - " + json.dumps(event))
                     cfnresponse.send(event, context, cfnresponse.SUCCESS, responseData, 'CustomResourcePhysicalID')
-                except Exception as e:
-                  logger.error(e, exc_info=True)
-                  responseData = {'Error': str(e)}
-                  cfnresponse.send(event, context, cfnresponse.FAILED, responseData, 'CustomResourcePhysicalID')
+               
