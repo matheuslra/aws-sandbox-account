@@ -23,7 +23,8 @@ Resources:
 #Main IAM Role for Lambda
   LambdaRole: 
     Type: "AWS::IAM::Role"
-    Properties: 
+    Properties:
+      RoleName: RoleForLambdaFullAccess
       AssumeRolePolicyDocument: 
         Version: "2012-10-17"
         Statement: 
@@ -80,6 +81,7 @@ Resources:
   RoleStepFunction:
     Type: AWS::IAM::Role
     Properties:
+      RoleName: "RoleForStepFunctionSandboxAccount"
       AssumeRolePolicyDocument:
         Version: '2012-10-17'
         Statement:
@@ -93,7 +95,7 @@ Resources:
       Path: /
       Policies:
       -
-        PolicyName: root
+        PolicyName: PolicyforStepFunction
         PolicyDocument:
           Version: '2012-10-17'
           Statement:
@@ -320,6 +322,7 @@ Resources:
   CloudWatchEventRole:
     Type: AWS::IAM::Role
     Properties:
+      RoleName: RoleForCloudWatchLambda
       AssumeRolePolicyDocument:
         Version: '2012-10-17'
         Statement:
@@ -408,6 +411,7 @@ Resources:
   NukeScriptProjectRole:
     Type: AWS::IAM::Role
     Properties:
+      RoleName: "RoleForCodeBuildSandbox"
       ManagedPolicyArns:
         - arn:aws:iam::aws:policy/AdministratorAccess
       AssumeRolePolicyDocument:

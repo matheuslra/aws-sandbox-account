@@ -41,6 +41,14 @@ accounts:
       - property: Name
         type: exact
         value: "aws-controltower/CloudTrailLogs"
+      CloudWatchEventsRule:
+      - property: Name
+        type: exact
+        value: "aws-controltower-ConfigComplianceChangeEventRule"
+      CloudWatchEventsTarget:
+       - property: Name
+         type: glob
+         value: "Compliance-Change-Topic"
       SNSTopic:
       - property: Name
         type: glob
