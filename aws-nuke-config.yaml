@@ -1,76 +1,76 @@
 regions:
-# - us-east-1
-# - sa-east-1
-# - global
-- us-west-1
+- us-east-1
+- sa-east-1
+- global
+
 account-blacklist:
 - "869122752574" # production
 
-# resource-types:
-#   # don't nuke
-#   excludes:
-#   - EC2VPC
-#   - EC2VPCEndpoint
-#   - EC2Subnet
-#   - EC2TGW
-#   - EC2TGWAttachment
-#   - EC2InternetGateway
-#   - EC2InternetGatewayAttachment
-#   - EC2NATGateway
-#   - EC2NetworkACL
-#   - EC2RouteTable
-#   - EC2VPCEndpointServiceConfiguration
-#   - EC2VPCPeeringConnection
-#   - EC2VPNConnection
-#   - EC2DHCPOption
-#   - EC2VPNGateway
-#   - EC2VPNGatewayAttachment
-#   - CloudTrailTrail
+resource-types:
+  # don't nuke
+  excludes:
+  - EC2VPC
+  - EC2VPCEndpoint
+  - EC2Subnet
+  - EC2TGW
+  - EC2TGWAttachment
+  - EC2InternetGateway
+  - EC2InternetGatewayAttachment
+  - EC2NATGateway
+  - EC2NetworkACL
+  - EC2RouteTable
+  - EC2VPCEndpointServiceConfiguration
+  - EC2VPCPeeringConnection
+  - EC2VPNConnection
+  - EC2DHCPOption
+  - EC2VPNGateway
+  - EC2VPNGatewayAttachment
+  - CloudTrailTrail
 
 accounts:
-  "000000000000": {}
-    # filters: 
-    #   CloudFormationStack:
-    #   - property: Name
-    #     type: glob
-    #     value: "StackSet-AWSControlTowerBP-*"
-    #   CloudWatchLogsLogGroup:
-    #   - property: Name
-    #     type: glob
-    #     value: "AWSControlTowerBP*"
-    #   - property: Name
-    #     type: exact
-    #     value: "aws-controltower/CloudTrailLogs"
-    #   SNSTopic:
-    #   - property: Name
-    #     type: glob
-    #     value: "aws-controltower-*"
-    #   SNSSubscription:
-    #   - property: Name
-    #     type: glob
-    #     value: "aws-controltower*"
-    #   CloudWatchEventsTarget:
-    #   - property: Name
-    #     type: glob
-    #     value: "aws-controltower*"
-    #   ConfigServiceConfigurationRecorder:
-    #   - property: Name
-    #     type: contains
-    #     value: "aws-controltower-BaselineConfigRecorder"
-    #   ConfigServiceDeliveryChannel:
-    #   - property: Name
-    #     type: contains
-    #     value: "aws-controltower-BaselineConfigDeliveryChannel"
-    #   IAMRole:
-    #   - property: Name
-    #     type: glob
-    #     value: "aws-controltower-*"
-    #   - property: Name
-    #     type: glob
-    #     value: "AWSControlTower*" 
-    #   - property: Name
-    #     type: glob
-    #     value: "AWSReservedSSO*"
+  "000000000000":
+    filters: 
+      CloudFormationStack:
+      - property: Name
+        type: glob
+        value: "StackSet-AWSControlTowerBP-*"
+      CloudWatchLogsLogGroup:
+      - property: Name
+        type: glob
+        value: "AWSControlTowerBP*"
+      - property: Name
+        type: exact
+        value: "aws-controltower/CloudTrailLogs"
+      SNSTopic:
+      - property: Name
+        type: glob
+        value: "aws-controltower-*"
+      SNSSubscription:
+      - property: Name
+        type: glob
+        value: "aws-controltower*"
+      CloudWatchEventsTarget:
+      - property: Name
+        type: glob
+        value: "aws-controltower*"
+      ConfigServiceConfigurationRecorder:
+      - property: Name
+        type: contains
+        value: "aws-controltower-BaselineConfigRecorder"
+      ConfigServiceDeliveryChannel:
+      - property: Name
+        type: contains
+        value: "aws-controltower-BaselineConfigDeliveryChannel"
+      IAMRole:
+      - property: Name
+        type: glob
+        value: "aws-controltower-*"
+      - property: Name
+        type: glob
+        value: "AWSControlTower*" 
+      - property: Name
+        type: glob
+        value: "AWSReservedSSO*"
       
         
         
