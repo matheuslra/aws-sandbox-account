@@ -14,7 +14,7 @@ Parameters:
     ConstraintDescription: "Provide the account id"
 
   AdministrationRole:
-    Description: The name of the ControlTowerStackSetRole
+    Description: "Insert the name of the ControlTowerStackSetRole. Format arn:aws:iam::MASTER-ACCOUNT-ID:role/service-role/AWSControlTowerStackSetRole"
     Type: String
     Default: "arn:aws:iam::869122752574:role/service-role/AWSControlTowerStackSetRole"
   
