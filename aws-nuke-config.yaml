@@ -49,15 +49,14 @@ accounts:
        - property: Name
          type: glob
          value: "Compliance-Change-Topic"
+       - property: Name
+         type: glob
+         value: "aws-controltower*"
       SNSTopic:
       - property: Name
         type: glob
         value: "aws-controltower-*"
       SNSSubscription:
-      - property: Name
-        type: glob
-        value: "aws-controltower*"
-      CloudWatchEventsTarget:
       - property: Name
         type: glob
         value: "aws-controltower*"
