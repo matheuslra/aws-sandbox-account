@@ -117,6 +117,7 @@ Resources:
       - MonitoringFuction
       - MissingDaysFunction
       - DeleteAccount
+      - ListResources
     Properties:
       StateMachineName: "StepFunctionMonitoring"
       DefinitionString: !Sub |-

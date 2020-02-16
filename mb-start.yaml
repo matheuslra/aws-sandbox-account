@@ -163,6 +163,32 @@ Resources:
       LambdaRegion: !Ref "AWS::Region"
       LambdaName: !Ref CreateSCP
 
+#Lambda Function for CreateSCPDeploy - this function will protect the resources that will be deployed in Sandbox Account via StackSet
+  CreateSCPDeploy:
+    Type: AWS::Lambda::Function
+    DependsOn:
+      - LambdaRole
+    Properties:
+      Code:
+        S3Bucket: masterbuilder-account-sandbox
+        S3Key: "create-scp-deploy.zip"
+      Environment:
+        Variables:
+          'accountid' : !Ref AccountIdSandbox
+      Description: "Function for Create SCP to block create new resources outside us-east-1 and sa-east-1"
+      Handler: create-scp-deploy.lambda_handler
+      Role: !GetAtt LambdaRole.Arn
+      Runtime: python3.7
+      Timeout: 300
+
+  ExecuteSCPDeployLambdaCustom:
+    Type: 'Custom::CustomResource'
+    DependsOn:
+      - CreateSCPDeploy
+    Properties:
+      ServiceToken: !GetAtt 'CreateSCPDeploy.Arn'
+      LambdaRegion: !Ref "AWS::Region"
+      LambdaName: !Ref CreateSCPDeploy
 
 
 
