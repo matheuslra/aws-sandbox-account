@@ -388,6 +388,7 @@ Resources:
       - StepFunctionMonitoring
     Properties:
       Description: "Scheduled trigger step function every day"
+      Name: "Sandbox-MonitoringEventRule"
       ScheduleExpression: "rate(1 day)"
       State: "ENABLED"
       Targets:
