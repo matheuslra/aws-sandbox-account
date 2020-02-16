@@ -168,6 +168,8 @@ Resources:
     Type: AWS::Lambda::Function
     DependsOn:
       - LambdaRole
+      - CreateSCP
+      - ExecuteSCPLambdaCustom
     Properties:
       Code:
         S3Bucket: masterbuilder-account-sandbox
