@@ -36,6 +36,9 @@ accounts:
       - property: Name
         type: glob
         value: "StackSet-AWSControlTowerBP-*"
+      - property: Name
+        type: glob
+        value: "StackSet-Stack*"
       CloudWatchLogsLogGroup:
       - property: Name
         type: glob
@@ -47,8 +50,7 @@ accounts:
       - property: Name
         type: exact
         value: "aws-controltower-ConfigComplianceChangeEventRule"
-      - property: Name
-        type: exact
+      - property: Rule
         value: "Sandbox-MonitoringEventRule"
       CloudWatchEventsTarget:
        - property: Name
