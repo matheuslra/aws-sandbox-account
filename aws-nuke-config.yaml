@@ -26,6 +26,7 @@ resource-types:
   - EC2VPNGateway
   - EC2VPNGatewayAttachment
   - CloudTrailTrail
+  - SNSSubscription
 
 accounts:
   "000000000000":
@@ -85,7 +86,7 @@ accounts:
         type: exact
         value: "RoleForStepFunctionSandboxAccount"
       - property: Name
-        type: exact
+        type: glob
         value: "RoleForCodeBuildSandbox"
       - property: Name
         type: exact
