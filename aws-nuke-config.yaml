@@ -63,7 +63,7 @@ accounts:
         value: "aws-controltower-SecurityNotifications"
       - property: Name
         type: exact
-        value: "Sandbox-SNSTopic"
+        value: "arn:aws:sns:us-east-1:000000000000:Sandbox-SNSTopic "
       ConfigServiceConfigurationRecorder:
       - property: Name
         type: contains
@@ -86,7 +86,7 @@ accounts:
         type: exact
         value: "RoleForStepFunctionSandboxAccount"
       - property: Name
-        type: glob
+        type: contains
         value: "RoleForCodeBuildSandbox"
       - property: Name
         type: exact
@@ -105,7 +105,7 @@ accounts:
       LambdaFunction:
       - property: Name
         type: exact
-        value: "MonitoringFunction"
+        value: "MonitoringFuction"
       - property: Name
         type: exact
         value: "DeleteAccount"
