@@ -29,7 +29,8 @@ resource-types:
 
 accounts:
   "000000000000":
-    filters: 
+    filters:
+
       CloudFormationStack:
       - property: Name
         type: glob
@@ -45,6 +46,9 @@ accounts:
       - property: Name
         type: exact
         value: "aws-controltower-ConfigComplianceChangeEventRule"
+      - property: Name
+        type: exact
+        value: "Sandbox-MonitoringEventRule"
       CloudWatchEventsTarget:
        - property: Name
          type: glob
@@ -54,12 +58,11 @@ accounts:
          value: "aws-controltower*"
       SNSTopic:
       - property: Name
-        type: glob
-        value: "aws-controltower-*"
-      SNSSubscription:
+        type: exact
+        value: "aws-controltower-SecurityNotifications"
       - property: Name
-        type: glob
-        value: "aws-controltower*"
+        type: exact
+        value: "Sandbox-SNSTopic"
       ConfigServiceConfigurationRecorder:
       - property: Name
         type: contains
@@ -78,6 +81,52 @@ accounts:
       - property: Name
         type: glob
         value: "AWSReservedSSO*"
+      - property: Name
+        type: exact
+        value: "RoleForStepFunctionSandboxAccount"
+      - property: Name
+        type: exact
+        value: "RoleForCodeBuildSandbox"
+      - property: Name
+        type: exact
+        value: "RoleForLambdaFullAccess"
+      SFNStateMachine:
+      - property: Name
+        type: exact
+        value: "StepFunctionMonitoring"
+      CodeBuildProject:
+      - property: Name
+        type: exact
+        value: "AccountNuker-List"
+      - property: Name
+        type: exact
+        value: "AccountNuker-Delete"
+      LambdaFunction:
+      - property: Name
+        type: exact
+        value: "MonitoringFunction"
+      - property: Name
+        type: exact
+        value: "DeleteAccount"
+      - property: Name
+        type: exact
+        value: "MissingDaysFunction"
+      - property: Name
+        type: exact
+        value: "ListResources"
+      - property: Name
+        type: exact
+        value: "ExecuteCWE"
+      SSMParameter:
+      - property: Name
+        type: exact
+        value: "account_id"
+      - property: Name
+        type: exact
+        value: "account_days"
+      - property: Name
+        type: exact
+        value: "account_initial"
       
         
         
