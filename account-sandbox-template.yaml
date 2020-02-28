@@ -44,6 +44,16 @@ Resources:
             Action: "*"
             Resource: "*"
 #Save into a SSM Parameter Store how many days this sandbox account will live
+  AccountDaysInitial:
+    Type: AWS::SSM::Parameter
+    Properties:
+      Name: account_initial
+      Type: String
+      Value: !Ref DaysForAccount
+      Description: SSM Parameter for initial days account.
+      Tags:
+        Sandbox: 'Yes'
+
   AccountDays:
     Type: AWS::SSM::Parameter
     Properties:
@@ -205,8 +215,20 @@ Resources:
           import boto3
           def lambda_handler(event, context):
             client = boto3.client('codebuild')
+            ssm = boto3.client('ssm')
             response = client.start_build(
               projectName='AccountNuker-Delete'
+            )
+
+            initial_days = ssm.get_parameter(
+                Name='account_initial'
+            )
+
+            parameter = ssm.put_parameter(
+              Name='account_days',
+              Value=initial_days,
+              Type='String',
+              Overwrite=True
             )
       FunctionName: DeleteAccount
       Description: "Function for delete the resources in aws-nuke"

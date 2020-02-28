@@ -50,7 +50,8 @@ accounts:
       - property: Name
         type: exact
         value: "aws-controltower-ConfigComplianceChangeEventRule"
-      - property: Rule
+      - property: Name
+        type: exact
         value: "Sandbox-MonitoringEventRule"
       CloudWatchEventsTarget:
        - property: Name
