@@ -77,7 +77,7 @@ Resources:
 #Main IAM Role for Lambda
   LambdaRole: 
     Type: "AWS::IAM::Role"
-    Properties: 
+    Properties:
       AssumeRolePolicyDocument: 
         Version: "2012-10-17"
         Statement: 
@@ -89,19 +89,37 @@ Resources:
               - "sts:AssumeRole"
       Path: "/"
       Policies:
-      - PolicyName: LambdaAccessAllPolicyPolicy
+      - PolicyName: LambdaAccessS3GetOject
         PolicyDocument:
           Version: '2012-10-17'
           Statement:
             Effect: Allow
-            Action: "*"
+            Action: "s3:GetObject"
+            Resource: "arn:aws:s3:::*/*"
+      - PolicyName: LambdaAccessCloudFormation
+        PolicyDocument:
+          Version: '2012-10-17'
+          Statement:
+            Effect: Allow
+            Action: 
+              - "cloudformation:CreateStackSet"
+              - "cloudformation:CreateStackInstances"
+            Resource: "*"
+      - PolicyName: LambdaAccessOrganizations
+        PolicyDocument:
+          Version: '2012-10-17'
+          Statement:
+            Effect: Allow
+            Action: 
+              - "organizations:AttachPolicy"
+              - "organizations:ListPolicies"
+              - "organizations:CreatePolicy"
             Resource: "*"
   
   AccountSandboxLambda:
     Type: "AWS::Lambda::Function"
     Properties:
       Handler: "5-CustomworkingLambdaCode.main"
-      #Handler: "index.main"
       Runtime: "python3.6"
       Role: !GetAtt LambdaRole.Arn
       Timeout: 180

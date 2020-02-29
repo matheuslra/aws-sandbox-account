@@ -24,7 +24,7 @@ Resources:
   LambdaRole: 
     Type: "AWS::IAM::Role"
     Properties:
-      RoleName: RoleForLambdaFullAccess
+      RoleName: RoleForLambdaAccessResources
       AssumeRolePolicyDocument: 
         Version: "2012-10-17"
         Statement: 
@@ -36,14 +36,24 @@ Resources:
               - "sts:AssumeRole"
       Path: "/"
       Policies:
-      - PolicyName: LambdaAccessAllPolicyPolicy
+      - 
+        PolicyName: LambdaAccess
         PolicyDocument:
           Version: '2012-10-17'
           Statement:
-            Effect: Allow
-            Action: "*"
-            Resource: "*"
-#Save into a SSM Parameter Store how many days this sandbox account will live
+            -
+              Effect: Allow
+              Action:
+                - ssm:PutParameter
+                - states:ListStateMachines
+                - sns:Publish
+                - states:StartExecution
+                - sns:ListTopics
+                - codebuild:StartBuild
+                - ssm:GetParameter
+              Resource: "*"
+
+#Save into a SSM Parameter Store the original amount of days of the account
   AccountDaysInitial:
     Type: AWS::SSM::Parameter
     Properties:
@@ -54,6 +64,7 @@ Resources:
       Tags:
         Sandbox: 'Yes'
 
+#Save into a SSM Parameter Store how many days this sandbox account will live
   AccountDays:
     Type: AWS::SSM::Parameter
     Properties:
@@ -64,6 +75,7 @@ Resources:
       Tags:
         Sandbox: 'Yes'
 
+#Save into a SSM Parameter Store the account id
   AccountIdParameter:
     Type: AWS::SSM::Parameter
     Properties:
@@ -74,6 +86,7 @@ Resources:
       Tags:
         Sandbox: 'Yes'
 
+#Topic SNS and Subscrition for receive email notification about account sandbox
   NotificationSNS:
         Type: "AWS::SNS::Topic"
         Properties:
@@ -342,32 +355,32 @@ Resources:
 
 
 # Role for CloudWatch Event
-  CloudWatchEventRole:
-    Type: AWS::IAM::Role
-    Properties:
-      RoleName: RoleForCloudWatchLambda
-      AssumeRolePolicyDocument:
-        Version: '2012-10-17'
-        Statement:
-        - 
-          Effect: Allow
-          Principal:
-            Service:
-              - events.amazonaws.com
-          Action:
-              - sts:AssumeRole
-      Path: /
-      Policies:
-      -
-        PolicyName: CWEPolicy
-        PolicyDocument:
-          Version: '2012-10-17'
-          Statement:
-            -
-              Effect: Allow
-              Action:
-                - lambda:*
-              Resource: '*'
+  # CloudWatchEventRole:
+  #   Type: AWS::IAM::Role
+  #   Properties:
+  #     RoleName: RoleForCloudWatchLambda
+  #     AssumeRolePolicyDocument:
+  #       Version: '2012-10-17'
+  #       Statement:
+  #       - 
+  #         Effect: Allow
+  #         Principal:
+  #           Service:
+  #             - events.amazonaws.com
+  #         Action:
+  #             - sts:AssumeRole
+  #     Path: /
+  #     Policies:
+  #     -
+  #       PolicyName: CWEInvokeLambda
+  #       PolicyDocument:
+  #         Version: '2012-10-17'
+  #         Statement:
+  #           -
+  #             Effect: Allow
+  #             Action:
+  #               - lambda:InvokeFunction
+  #             Resource: '*'
 
 #Lambda Function that is the trigger in CloudWatch Event, and on the executition trigger a executition of the StepFunction every day
   ExecuteCWE:
