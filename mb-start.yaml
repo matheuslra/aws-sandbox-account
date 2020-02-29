@@ -47,14 +47,6 @@ Parameters:
     Type: Number
     Description: "Add the amount of limit for this specific sandbox account. You will receive a notification when reach 90% of this number."
     Default: 150
-
-  StackName:
-    Type: String
-    Description: "Insert a name for stack that will be deploy in sandbox account"
-    AllowedPattern: ".+"
-    ConstraintDescription: "Must provide a valid email address"
-
-  
   
 
 Resources:
@@ -120,7 +112,7 @@ Resources:
         Variables:
           'accountemail' : !Ref AddrEmail
           'accountid' : !Ref AccountIdSandbox
-          'stackname' : !Ref StackName
+          'stackname' : !Join ["-", ["StackSet", !Ref AccountIdSandbox]]
           'stackregion' : !Ref StackRegion
           'executionrole' : !Ref ExecutionRole
           'administrationrole': !Ref AdministrationRole
