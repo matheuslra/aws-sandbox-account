@@ -4,18 +4,20 @@ Description: Create service catalog on the master account
 Parameters:
   ArnRoleServiceCatalogSSO:
     Type: String
-    Description: "Put the ARN of role ServiceCatalogEndUserAccess provide by SSO"
+    Description: "Put the ARN of role ServiceCatalogEndUserAccess provide by SSO. Format arn:aws:iam::ID-ACCOUNT:role/aws-reserved/sso.amazonaws.com/AWSReservedSSO_AWSServiceCatalogEndUserAccess_f19e0564a782aa46"
     AllowedPattern: ".+"
     ConstraintDescription: "Provide the ARN role"
 
 Resources:
+#Service Catalog Portfolio
   SandboxAccountPortfolio:
     Type: "AWS::ServiceCatalog::Portfolio"
     Properties: 
       DisplayName: "SandboxAccount"
       AcceptLanguage: "en" 
-      ProviderName: "Amazon"
+      ProviderName: "AWS Sandbox Account"
 
+#Service Catalog Product based on CloudFormation template in GitHub
   AccountSandbox:
     Type: "AWS::ServiceCatalog::CloudFormationProduct"
     Properties:
@@ -23,7 +25,7 @@ Resources:
       Description: "This product builds a SCP and budget on the MASTER account and start a stack set in a Sandbox account"
       Distributor: "Amazon"
       Name: "Sandbox Account"
-      Owner: "IT Services"
+      Owner: "Matheus Arrais"
       SupportEmail: "support@yourcompany.com"
       SupportUrl: "https://www.amazon.com"
       SupportDescription: "Support Description"
@@ -34,12 +36,14 @@ Resources:
         Info:
           LoadTemplateFromURL : "https://raw.githubusercontent.com/matheuslra/aws-sandbox-account/master/mb-start.yaml"
 
+#Association between Service Catalog Portfolio and Product
   AccountSandboxAssociation: 
     Type: "AWS::ServiceCatalog::PortfolioProductAssociation"
     Properties:
       ProductId: !Ref AccountSandbox
       PortfolioId: !Ref SandboxAccountPortfolio
-      
+
+#Association between Service Catalog Portfolio and a Role for launch the product inside this portfolio
   PrincipalAccountSandbox:
     Type: AWS::ServiceCatalog::PortfolioPrincipalAssociation
     Properties: 
@@ -47,5 +51,33 @@ Resources:
       PortfolioId: !Ref SandboxAccountPortfolio
       PrincipalARN: !Ref ArnRoleServiceCatalogSSO
       PrincipalType: IAM
+
+#Constraint for Launch a Product inside a Portfolio. This enable a Role that don't have access to create resources be able to create
+  ConstraintLaunchRole:
+    Type: AWS::ServiceCatalog::LaunchRoleConstraint
+    DependsOn:
+      - AdminRole
+    Properties: 
+      AcceptLanguage: en
+      Description: "Constraint for launch Sandbox Account"
+      PortfolioId: !Ref SandboxAccountPortfolio
+      ProductId: !Ref AccountSandbox
+      RoleArn: !Ref AdminRole
+
+#IAM Role with full permission for launch the product in Service Catalog Portfolio
+  AdminRole:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: "RoleAdminFullForServiceCatalog"
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/AdministratorAccess
+      AssumeRolePolicyDocument:
+        Version: 2012-10-17
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: servicecatalog.amazonaws.com
+            Action: sts:AssumeRole
+
 
 
