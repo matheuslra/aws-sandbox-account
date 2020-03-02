@@ -102,8 +102,7 @@ Resources:
           Statement:
             Effect: Allow
             Action: 
-              - "cloudformation:CreateStackSet"
-              - "cloudformation:CreateStackInstances"
+              - cloudformation:*
             Resource: "*"
       - PolicyName: LambdaAccessOrganizations
         PolicyDocument:
@@ -111,9 +110,7 @@ Resources:
           Statement:
             Effect: Allow
             Action: 
-              - "organizations:AttachPolicy"
-              - "organizations:ListPolicies"
-              - "organizations:CreatePolicy"
+              - organizations:*
             Resource: "*"
       - PolicyName: LambdaAcessForLambda
         PolicyDocument:
@@ -121,8 +118,7 @@ Resources:
           Statement:
             Effect: Allow
             Action: 
-              - "lambda:InvokeFunction"
-              - "lambda:AddPermission"
+              - lambda:*
             Resource: "*"
       - PolicyName: LambdaAccessForCloudWatch
         PolicyDocument:
@@ -130,9 +126,7 @@ Resources:
           Statement:
             Effect: Allow
             Action:
-              - logs:CreateLogGroup
-              - logs:CreateLogStream
-              - logs:PutLogEvents
+              - logs:*
             Resource: arn:aws:logs:*:*:*
   
   AccountSandboxLambda:
