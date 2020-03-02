@@ -62,7 +62,7 @@ Resources:
       Description: "Constraint for launch Sandbox Account"
       PortfolioId: !Ref SandboxAccountPortfolio
       ProductId: !Ref AccountSandbox
-      RoleArn: !Ref AdminRole
+      RoleArn: !GetAtt AdminRole.Arn
 
 #IAM Role with full permission for launch the product in Service Catalog Portfolio
   AdminRole:
