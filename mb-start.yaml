@@ -115,14 +115,25 @@ Resources:
               - "organizations:ListPolicies"
               - "organizations:CreatePolicy"
             Resource: "*"
-      - PolicyName: LambdaAccessLambda
+      - PolicyName: LambdaAcessForLambda
         PolicyDocument:
           Version: '2012-10-17'
           Statement:
             Effect: Allow
             Action: 
               - "lambda:InvokeFunction"
+              - "lambda:AddPermission"
             Resource: "*"
+      - PolicyName: LambdaAccessForCloudWatch
+        PolicyDocument:
+          Version: '2012-10-17'
+          Statement:
+            Effect: Allow
+            Action:
+              - logs:CreateLogGroup
+              - logs:CreateLogStream
+              - logs:PutLogEvents
+            Resource: arn:aws:logs:*:*:*
   
   AccountSandboxLambda:
     Type: "AWS::Lambda::Function"

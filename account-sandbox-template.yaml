@@ -51,6 +51,9 @@ Resources:
                 - sns:ListTopics
                 - codebuild:StartBuild
                 - ssm:GetParameter
+                - logs:CreateLogGroup
+                - logs:CreateLogStream
+                - logs:PutLogEvents
               Resource: "*"
 
 #Save into a SSM Parameter Store the original amount of days of the account
