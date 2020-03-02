@@ -115,6 +115,14 @@ Resources:
               - "organizations:ListPolicies"
               - "organizations:CreatePolicy"
             Resource: "*"
+      - PolicyName: LambdaAccessLambda
+        PolicyDocument:
+          Version: '2012-10-17'
+          Statement:
+            Effect: Allow
+            Action: 
+              - "lambda:InvokeFunction"
+            Resource: "*"
   
   AccountSandboxLambda:
     Type: "AWS::Lambda::Function"
