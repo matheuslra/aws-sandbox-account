@@ -47,12 +47,8 @@ accounts:
         type: exact
         value: "aws-controltower/CloudTrailLogs"
       CloudWatchEventsRule:
-      - property: Name
-        type: exact
-        value: "aws-controltower-ConfigComplianceChangeEventRule"
-      - property: Name
-        type: exact
-        value: "Sandbox-MonitoringEventRule"
+        - "aws-controltower-ConfigComplianceChangeEventRule"
+        - "Sandbox-MonitoringEventRule"
       CloudWatchEventsTarget:
        - property: Name
          type: glob
