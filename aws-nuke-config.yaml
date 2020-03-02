@@ -47,12 +47,11 @@ accounts:
         type: exact
         value: "aws-controltower/CloudTrailLogs"
       CloudWatchEventsRule:
-      #- "aws-controltower-ConfigComplianceChangeEventRule"
-      - "Sandbox-MonitoringEventRule"
+      - "Rule: aws-controltower-ConfigComplianceChangeEventRule"
+      - "Rule: Sandbox-MonitoringEventRule"
       CloudWatchEventsTarget:
-      - "Compliance-Change-Topic"
-      - "aws-controltower*"
-      - "Sandbox-MonitoringEventRule"
+      - "Rule: aws-controltower-ConfigComplianceChangeEventRule"
+      - "Rule: Sandbox-MonitoringEventRule"
       SNSTopic:
       - property: Name
         type: exact
@@ -115,15 +114,9 @@ accounts:
         type: exact
         value: "ExecuteCWE"
       SSMParameter:
-      - property: Name
-        type: exact
-        value: "account_id"
-      - property: Name
-        type: exact
-        value: "account_days"
-      - property: Name
-        type: exact
-        value: "account_initial"
+      - "account_id"
+      - "account_days"
+      - "account_initial"
       
         
         
