@@ -9,12 +9,12 @@ def lambda_handler(event, context):
             logger.info('event: {}'.format(event))
             logger.info('context: {}'.format(context))
             client = boto3.client('organizations')
-
+            accountid = os.environ['accountid']
             logger.info('Always printing the event: {}'.format(event))
             if event["RequestType"] == "Create" or event["RequestType"] == "Update":
               try:
                   logger.info("Event Body - " + json.dumps(event))
-                  accountid = os.environ['accountid']
+                  
                   policies = client.list_policies(
                       Filter='SERVICE_CONTROL_POLICY'
                     )
