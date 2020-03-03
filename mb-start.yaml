@@ -119,6 +119,7 @@ Resources:
             Effect: Allow
             Action: 
               - lambda:*
+              - ssm:*
             Resource: "*"
       - PolicyName: LambdaAccessForCloudWatch
         PolicyDocument:
@@ -143,7 +144,7 @@ Resources:
         Variables:
           'accountemail' : !Ref AddrEmail
           'accountid' : !Ref AccountIdSandbox
-          'stackname' : !Join ["-", ["StackSet", !Ref AccountIdSandbox]]
+          'stackname' : !Join ["-", ["SandboxStackSet", !Ref AccountIdSandbox]]
           'stackregion' : !Ref StackRegion
           'executionrole' : !Ref ExecutionRole
           'administrationrole': !Ref AdministrationRole

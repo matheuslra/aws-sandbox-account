@@ -9,12 +9,12 @@ def lambda_handler(event, context):
             logger.info('event: {}'.format(event))
             logger.info('context: {}'.format(context))
             client = boto3.client('organizations')
-
+            accountid = os.environ['accountid']
             logger.info('Always printing the event: {}'.format(event))
             if event["RequestType"] == "Create" or event["RequestType"] == "Update":
               try:
                   logger.info("Event Body - " + json.dumps(event))
-                  accountid = os.environ['accountid']
+                  #accountid = os.environ['accountid']
                   policies = client.list_policies(
                       Filter='SERVICE_CONTROL_POLICY'
                     )
@@ -26,7 +26,6 @@ def lambda_handler(event, context):
                     print ("Policy already exists")
                     for i, (name, id) in enumerate(zip(denypolicyname, denypolicyid)):
                       if policy_name in name:
-                      
                         attach = client.attach_policy(
                             PolicyId=id,
                             TargetId=accountid
