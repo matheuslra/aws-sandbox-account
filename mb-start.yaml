@@ -89,45 +89,45 @@ Resources:
               - "sts:AssumeRole"
       Path: "/"
       Policies:
-      - PolicyName: LambdaAccessS3GetOject
-        PolicyDocument:
-          Version: '2012-10-17'
-          Statement:
-            Effect: Allow
-            Action: "s3:GetObject"
-            Resource: "arn:aws:s3:::*/*"
+      # - PolicyName: LambdaAccessS3GetOject
+      #   PolicyDocument:
+      #     Version: '2012-10-17'
+      #     Statement:
+      #       Effect: Allow
+      #       Action: "s3:GetObject"
+      #       Resource: "arn:aws:s3:::*/*"
       - PolicyName: LambdaAccessCloudFormation
         PolicyDocument:
           Version: '2012-10-17'
           Statement:
             Effect: Allow
             Action: 
-              - cloudformation:*
+              - '*'
             Resource: "*"
-      - PolicyName: LambdaAccessOrganizations
-        PolicyDocument:
-          Version: '2012-10-17'
-          Statement:
-            Effect: Allow
-            Action: 
-              - organizations:*
-            Resource: "*"
-      - PolicyName: LambdaAcessForLambda
-        PolicyDocument:
-          Version: '2012-10-17'
-          Statement:
-            Effect: Allow
-            Action: 
-              - lambda:*
-            Resource: "*"
-      - PolicyName: LambdaAccessForCloudWatch
-        PolicyDocument:
-          Version: '2012-10-17'
-          Statement:
-            Effect: Allow
-            Action:
-              - logs:*
-            Resource: arn:aws:logs:*:*:*
+      # - PolicyName: LambdaAccessOrganizations
+      #   PolicyDocument:
+      #     Version: '2012-10-17'
+      #     Statement:
+      #       Effect: Allow
+      #       Action: 
+      #         - organizations:*
+      #       Resource: "*"
+      # - PolicyName: LambdaAcessForLambda
+      #   PolicyDocument:
+      #     Version: '2012-10-17'
+      #     Statement:
+      #       Effect: Allow
+      #       Action: 
+      #         - lambda:*
+      #       Resource: "*"
+      # - PolicyName: LambdaAccessForCloudWatch
+      #   PolicyDocument:
+      #     Version: '2012-10-17'
+      #     Statement:
+      #       Effect: Allow
+      #       Action:
+      #         - logs:*
+      #       Resource: arn:aws:logs:*:*:*
   
   AccountSandboxLambda:
     Type: "AWS::Lambda::Function"
