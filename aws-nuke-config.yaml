@@ -56,10 +56,9 @@ accounts:
       SNSTopic:
       - "TopicARN: arn:aws:sns:us-east-1:000000000000:aws-controltower-SecurityNotifications"
       - "TopicARN: arn:aws:sns:us-east-1:000000000000:Sandbox-SNSTopic"
+      - "TopicARN: arn:aws:sns:sa-east-1:000000000000:Sandbox-SNSTopic"
       ConfigServiceDeliveryChannel:
-      - property: Name
-        type: contains
-        value: "aws-controltower-BaselineConfigDeliveryChannel"
+      - "aws-controltower-BaselineConfigDeliveryChannel"
       IAMRole:
       - "RoleForLambdaFullAccess"
       - "aws-controltower-AdministratorExecutionRole"
@@ -74,6 +73,7 @@ accounts:
       - "RoleForStepFunctionSandboxAccount"
       SFNStateMachine:
       - "arn:aws:states:us-east-1:000000000000:stateMachine:StepFunctionMonitoring"
+      - "arn:aws:states:sa-east-1:000000000000:stateMachine:StepFunctionMonitoring"
       CodeBuildProject:
       - "AccountNuker-List"
       - "AccountNuker-Delete"
