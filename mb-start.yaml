@@ -119,7 +119,6 @@ Resources:
             Effect: Allow
             Action: 
               - lambda:*
-              - ssm:*
             Resource: "*"
       - PolicyName: LambdaAccessForCloudWatch
         PolicyDocument:
