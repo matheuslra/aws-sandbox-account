@@ -31,7 +31,8 @@ resource-types:
 accounts:
   "000000000000":
     filters:
-
+      ConfigServiceConfigurationRecorder:
+      - "aws-controltower-BaselineConfigRecorder"
       CloudFormationStack:
       - property: Name
         type: glob
@@ -53,12 +54,12 @@ accounts:
       - "Rule: aws-controltower-ConfigComplianceChangeEventRule"
       - "Rule: Sandbox-MonitoringEventRule"
       SNSTopic:
-      - property: Name
+      - property: TopicARN
         type: exact
         value: "aws-controltower-SecurityNotifications"
       - property: Name
         type: exact
-        value: "arn:aws:sns:us-east-1:000000000000:Sandbox-SNSTopic "
+        value: "arn:aws:sns:us-east-1:000000000000:Sandbox-SNSTopic"
       ConfigServiceConfigurationRecorder:
       - property: Name
         type: contains
@@ -68,35 +69,22 @@ accounts:
         type: contains
         value: "aws-controltower-BaselineConfigDeliveryChannel"
       IAMRole:
-      - property: Name
-        type: glob
-        value: "aws-controltower-*"
-      - property: Name
-        type: glob
-        value: "AWSControlTower*" 
-      - property: Name
-        type: glob
-        value: "AWSReservedSSO*"
-      - property: Name
-        type: exact
-        value: "RoleForStepFunctionSandboxAccount"
-      - property: Name
-        type: contains
-        value: "RoleForCodeBuildSandbox"
-      - property: Name
-        type: exact
-        value: "RoleForLambdaFullAccess"
+      - "RoleForLambdaFullAccess"
+      - "aws-controltower-AdministratorExecutionRole"
+      - "aws-controltower-CloudWatchLogsRole"
+      - "aws-controltower-ConfigRecorderRole "
+      - "aws-controltower-ForwardSnsNotificationRole"
+      - "aws-controltower-ReadOnlyExecutionRole"
+      - "AWSControlTowerExecution"
+      - "AWSControlTower_VPCFlowLogsRole"
+      - "RoleForCodeBuildSandbox"
+      - "RoleForLambdaAccessResources"
+      - "RoleForStepFunctionSandboxAccount"
       SFNStateMachine:
-      - property: Name
-        type: exact
-        value: "StepFunctionMonitoring"
+      - "arn:aws:states:us-east-1:000000000000:stateMachine:StepFunctionMonitoring"
       CodeBuildProject:
-      - property: Name
-        type: exact
-        value: "AccountNuker-List"
-      - property: Name
-        type: exact
-        value: "AccountNuker-Delete"
+      - "AccountNuker-List"
+      - "AccountNuker-Delete"
       LambdaFunction:
       - property: Name
         type: exact
