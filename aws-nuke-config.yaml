@@ -54,16 +54,8 @@ accounts:
       - "Rule: aws-controltower-ConfigComplianceChangeEventRule"
       - "Rule: Sandbox-MonitoringEventRule"
       SNSTopic:
-      - property: TopicARN
-        type: exact
-        value: "aws-controltower-SecurityNotifications"
-      - property: Name
-        type: exact
-        value: "arn:aws:sns:us-east-1:000000000000:Sandbox-SNSTopic"
-      ConfigServiceConfigurationRecorder:
-      - property: Name
-        type: contains
-        value: "aws-controltower-BaselineConfigRecorder"
+      - "TopicARN: arn:aws:sns:us-east-1:000000000000:aws-controltower-SecurityNotifications"
+      - "TopicARN: arn:aws:sns:us-east-1:000000000000:Sandbox-SNSTopic"
       ConfigServiceDeliveryChannel:
       - property: Name
         type: contains
