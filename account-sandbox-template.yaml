@@ -21,7 +21,7 @@ Parameters:
 
   IncreaseLimitEC2:
     Type: Number
-    Description: ""
+    Description: "Maximum number of vCPUs assigned to the Running On-Demand Standard (A, C, D, H, I, M, R, T, Z) instances. Default to a new account is 384."
     Default: 0
 
 Resources:
@@ -239,14 +239,21 @@ Resources:
                   DesiredValue=value_limit_ec2
                   )
             else:
-                print("Parameter is 0")
-  
+                print("Parameter is 0") 
       FunctionName: IncreaseLimitEC2
       Description: "Function for increase limit ec2 on the sandbox account"
       Handler: index.lambda_handler
       Role: !GetAtt 'LambdaRole.Arn'
       Runtime: python3.7
       Timeout: 300
+
+  TriggerLambda:
+    Type: "Custom::TriggerLambda"
+    DependsOn: 
+      - IncreaseLimitEC2
+      - LambdaRole
+    Properties:
+      ServiceToken: !GetAtt IncreaseLimitEC2.Arn
 
   ListResources:
     Type: AWS::Lambda::Function

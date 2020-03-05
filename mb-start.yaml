@@ -50,7 +50,7 @@ Parameters:
   
   IncreaseLimitEC2:
     Type: Number
-    Description: "Maximum number of vCPUs assigned to the Running On-Demand Standard (A, C, D, H, I, M, R, T, Z) instances."
+    Description: "Maximum number of vCPUs assigned to the Running On-Demand Standard (A, C, D, H, I, M, R, T, Z) instances. Default to a new account is 384."
     Default: 0
   
 
