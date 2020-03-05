@@ -97,6 +97,7 @@ accounts:
       - "account_id"
       - "account_days"
       - "account_initial"
+      - "ec2_limit"
       
         
         

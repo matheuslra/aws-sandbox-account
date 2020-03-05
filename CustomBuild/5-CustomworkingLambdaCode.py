@@ -50,6 +50,10 @@ def deploy_resources(template, stackname, stackregion, accountid, executionrole,
                     {
                         'ParameterKey' : 'AccountIdSandbox',
                         'ParameterValue' : accountid
+                    },
+                    {
+                        'ParameterKey' : 'IncreaseLimitEC2',
+                        'ParameterValue' : increaseec2
                     }
                 ],
                 Capabilities=[
@@ -94,9 +98,10 @@ def main(event, context):
                     executionrole = os.environ['executionrole']
                     sourcebucket = os.environ['sourcebucket']
                     accountsandboxtemplate = os.environ['accountsandboxtemplate']
+                    increaseec2 = os.environ['increaseec2']
 
                     template = get_template(sourcebucket,accountsandboxtemplate)
-                    stack = deploy_resources(template, stackname, stackregion, accountid, executionrole, administrationrole, accountemail, accountdays)
+                    stack = deploy_resources(template, stackname, stackregion, accountid, executionrole, administrationrole, accountemail, accountdays,increaseec2)
                     print(stack)
 
                     logger.info("Response - " + json.dumps(response_data))

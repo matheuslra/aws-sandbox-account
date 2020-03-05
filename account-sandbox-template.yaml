@@ -19,6 +19,11 @@ Parameters:
     AllowedPattern: ".+"
     ConstraintDescription: "Must provide a valid email address" 
 
+  IncreaseLimitEC2:
+    Type: Number
+    Description: ""
+    Default: 0
+
 Resources:
 #Main IAM Role for Lambda
   LambdaRole: 
@@ -54,6 +59,7 @@ Resources:
                 - logs:CreateLogGroup
                 - logs:CreateLogStream
                 - logs:PutLogEvents
+                - servicequotas:RequestServiceQuotaIncrease
               Resource: "*"
 
 #Save into a SSM Parameter Store the original amount of days of the account
@@ -67,7 +73,17 @@ Resources:
       Tags:
         Sandbox: 'Yes'
 
-#Save into a SSM Parameter Store how many days this sandbox account will live
+#Save into a SSM Parameter Store how much ec2 limit will increase
+  IncreaseLimit:
+    Type: AWS::SSM::Parameter
+    Properties:
+      Name: ec2_limit
+      Type: String
+      Value: !Ref IncreaseLimitEC2
+      Description: SSM Parameter for increase limit ec2
+      Tags:
+        Sandbox: 'Yes'
+
   AccountDays:
     Type: AWS::SSM::Parameter
     Properties:
@@ -201,6 +217,37 @@ Resources:
       RoleArn: !GetAtt [ RoleStepFunction, Arn ]
 
 #Lambda function for notify how many days the sandbox account will terminate
+  IncreaseLimitEC2:
+    Type: AWS::Lambda::Function
+    DependsOn:
+      - LambdaRole
+    Properties:
+      Code:
+        ZipFile: |
+          import boto3
+          def lambda_handler(event, context):
+            client = boto3.client('service-quotas')
+            ssm = boto3.client('ssm')
+            
+            value_limit_ec2 = ssm.get_parameter(
+                Name='ec2_limit'
+                )
+            if value_limit_ec2 != 0:
+                response = client.request_service_quota_increase(
+                  ServiceCode='ec2',
+                  QuotaCode='L-1216C47A''
+                  DesiredValue=value_limit_ec2
+                  )
+            else:
+                print("Parameter is 0")
+  
+      FunctionName: IncreaseLimitEC2
+      Description: "Function for increase limit ec2 on the sandbox account"
+      Handler: index.lambda_handler
+      Role: !GetAtt 'LambdaRole.Arn'
+      Runtime: python3.7
+      Timeout: 300
+
   ListResources:
     Type: AWS::Lambda::Function
     DependsOn:
