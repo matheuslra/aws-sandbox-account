@@ -22,7 +22,7 @@ Parameters:
   IncreaseLimitEC2:
     Type: Number
     Description: "Maximum number of vCPUs assigned to the Running On-Demand Standard (A, C, D, H, I, M, R, T, Z) instances. Default to a new account is 384."
-    Default: 0
+    Default: "0"
 
 Resources:
 #Main IAM Role for Lambda
@@ -217,7 +217,7 @@ Resources:
       RoleArn: !GetAtt [ RoleStepFunction, Arn ]
 
 #Lambda function for notify how many days the sandbox account will terminate
-  IncreaseLimitEC2:
+  IncreaseLimitEC2Function:
     Type: AWS::Lambda::Function
     DependsOn:
       - LambdaRole
@@ -240,7 +240,7 @@ Resources:
                   )
             else:
                 print("Parameter is 0") 
-      FunctionName: IncreaseLimitEC2
+      FunctionName: IncreaseLimitEC2Function
       Description: "Function for increase limit ec2 on the sandbox account"
       Handler: index.lambda_handler
       Role: !GetAtt 'LambdaRole.Arn'
@@ -250,10 +250,10 @@ Resources:
   TriggerLambda:
     Type: "Custom::TriggerLambda"
     DependsOn: 
-      - IncreaseLimitEC2
+      - IncreaseLimitEC2Function
       - LambdaRole
     Properties:
-      ServiceToken: !GetAtt IncreaseLimitEC2.Arn
+      ServiceToken: !GetAtt IncreaseLimitEC2Function.Arn
 
   ListResources:
     Type: AWS::Lambda::Function
