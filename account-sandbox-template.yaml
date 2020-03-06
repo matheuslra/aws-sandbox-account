@@ -235,7 +235,7 @@ Resources:
             if value_limit_ec2 != 0:
                 response = client.request_service_quota_increase(
                   ServiceCode='ec2',
-                  QuotaCode='L-1216C47A''
+                  QuotaCode='L-1216C47A'
                   DesiredValue=value_limit_ec2
                   )
             else:
