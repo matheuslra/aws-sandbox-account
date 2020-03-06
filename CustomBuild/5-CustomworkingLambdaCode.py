@@ -24,7 +24,7 @@ def get_template(sourcebucket,accountsandboxtemplate):
     obj = s3.Object(sourcebucket,accountsandboxtemplate)
     return obj.get()['Body'].read().decode('utf-8') 
 
-def deploy_resources(template, stackname, stackregion, accountid, executionrole, administrationrole, accountemail, accountdays):
+def deploy_resources(template, stackname, stackregion, accountid, executionrole, administrationrole, accountemail, accountdays, increaseec2):
 
     '''
         Create a CloudFormation stack of resources within the new account
