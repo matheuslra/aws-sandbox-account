@@ -60,6 +60,7 @@ Resources:
                 - logs:CreateLogStream
                 - logs:PutLogEvents
                 - servicequotas:RequestServiceQuotaIncrease
+                - servicequotas:GetServiceQuota
               Resource: "*"
 
 #Save into a SSM Parameter Store the original amount of days of the account
