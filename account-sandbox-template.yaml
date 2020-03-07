@@ -246,7 +246,7 @@ Resources:
                 response = client.request_service_quota_increase(
                   ServiceCode='ec2',
                   QuotaCode='L-1216C47A',
-                  DesiredValue=value_limit_ec2
+                  DesiredValue=float(value_limit_ec2)
                   )
             else:
                 print("Parameter is diferent then current service quota value") 
