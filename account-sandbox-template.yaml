@@ -229,17 +229,27 @@ Resources:
             client = boto3.client('service-quotas')
             ssm = boto3.client('ssm')
             
-            value_limit_ec2 = ssm.get_parameter(
+            limit_ec2 = ssm.get_parameter(
                 Name='ec2_limit'
                 )
-            if value_limit_ec2 != 0:
+            value_limit_ec2 = limit_ec2['Parameter']['Value']
+            print(value_limit_ec2)
+            
+            get_quota = client.get_service_quota(
+                  ServiceCode='ec2',
+                  QuotaCode='L-1216C47A'
+              )
+            value_service_quota = get_quota['Quota']['Value']
+            print(value_service_quota)
+
+            if float(value_limit_ec2) > value_service_quota :
                 response = client.request_service_quota_increase(
                   ServiceCode='ec2',
                   QuotaCode='L-1216C47A',
-                  DesiredValue=float(value_limit_ec2)
+                  DesiredValue=value_limit_ec2
                   )
             else:
-                print("Parameter is 0") 
+                print("Parameter is diferent then current service quota value") 
       FunctionName: IncreaseLimitEC2Function
       Description: "Function for increase limit ec2 on the sandbox account"
       Handler: index.lambda_handler
