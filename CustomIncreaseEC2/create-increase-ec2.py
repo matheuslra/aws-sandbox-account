@@ -1,5 +1,6 @@
 import boto3, json, traceback, time
 import cfnresponse
+import requests
 import logging
 logger = logging.getLogger()
 logger.setLevel(logging.INFO)

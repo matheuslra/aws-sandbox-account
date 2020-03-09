@@ -61,6 +61,8 @@ Resources:
                 - logs:PutLogEvents
                 - servicequotas:RequestServiceQuotaIncrease
                 - servicequotas:GetServiceQuota
+                - iam:*
+                - lambda:*
               Resource: "*"
 
 #Save into a SSM Parameter Store the original amount of days of the account
