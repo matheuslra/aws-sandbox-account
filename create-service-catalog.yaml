@@ -8,7 +8,7 @@ Parameters:
     AllowedPattern: ".+"
     ConstraintDescription: "Provide the ARN role"
 
-  ArnRoleAdminO:
+  ArnRoleAdmin:
     Type: String
     Description: "Put the ARN of role ServiceCatalogEndUserAccess provide by SSO. Format arn:aws:iam::ID-ACCOUNT:role/aws-reserved/sso.amazonaws.com/AWSReservedSSO_AWSAdministratorAccess_db6fa9bde90081f26"
     AllowedPattern: ".+"
