@@ -1,17 +1,18 @@
-import boto3, json, traceback, time
+import boto3, json
 import cfnresponse
-import requests
 import logging
 logger = logging.getLogger()
 logger.setLevel(logging.INFO)
 def lambda_handler(event, context):
-  response_data = {}
-  try:
-    if event["RequestType"] == "Create" or event["RequestType"] == "Update":
+  responseData = {}
+  logger.info('event: {}'.format(event))
+  logger.info('context: {}'.format(context))
+  client = boto3.client('service-quotas')
+  ssm = boto3.client('ssm')
+  logger.info('Always printing the event: {}'.format(event))
+  if event["RequestType"] == "Create" or event["RequestType"] == "Update":
+    try:
       logger.info("Event Body - " + json.dumps(event))
-      client = boto3.client('service-quotas')
-      ssm = boto3.client('ssm')
-      
       limit_ec2 = ssm.get_parameter(
           Name='ec2_limit'
           )
@@ -33,13 +34,12 @@ def lambda_handler(event, context):
             )
       else:
           print("Parameter is diferent then current service quota value")
-    elif event["RequestType"] == "Delete":
-            logger.info("Event Body - " + json.dumps(event))
-            cfnresponse.send(event, context, cfnresponse.SUCCESS,{})
-    else:
-            logger.info("Event Body - " + json.dumps(event))
-            cfnresponse.send(event, context, cfnresponse.FAILED,{})
-  except Exception as e:
-        msg = 'See details in CloudWatch Log Stream: ' + context.log_stream_name
-        response_data['exception'] = str(e)[0:255] + '... ' + msg
-        cfnresponse.send(event, context, cfnresponse.FAILED, response_data)
+      cfnresponse.send(event, context, cfnresponse.SUCCESS, responseData, 'CustomResourcePhysicalID')   
+    except Exception as e:
+      logger.error(e, exc_info=True)
+      responseData = {'Error': str(e)}
+      cfnresponse.send(event, context, cfnresponse.FAILED, responseData, 'CustomResourcePhysicalID')
+
+  if event["RequestType"] == "Delete":
+    logger.info("Event Body - " + json.dumps(event))
+    cfnresponse.send(event, context, cfnresponse.SUCCESS,{})

@@ -8,6 +8,12 @@ Parameters:
     AllowedPattern: ".+"
     ConstraintDescription: "Provide the ARN role"
 
+  ArnRoleAdminO:
+    Type: String
+    Description: "Put the ARN of role ServiceCatalogEndUserAccess provide by SSO. Format arn:aws:iam::ID-ACCOUNT:role/aws-reserved/sso.amazonaws.com/AWSReservedSSO_AWSAdministratorAccess_db6fa9bde90081f26"
+    AllowedPattern: ".+"
+    ConstraintDescription: "Provide the ARN role"
+
 Resources:
 #Service Catalog Portfolio
   SandboxAccountPortfolio:
@@ -44,6 +50,14 @@ Resources:
       PortfolioId: !Ref SandboxAccountPortfolio
 
 #Association between Service Catalog Portfolio and a Role for launch the product inside this portfolio
+  SCEndUserAccountSandbox:
+    Type: AWS::ServiceCatalog::PortfolioPrincipalAssociation
+    Properties: 
+      AcceptLanguage: en
+      PortfolioId: !Ref SandboxAccountPortfolio
+      PrincipalARN: !Ref ArnRoleAdmin
+      PrincipalType: IAM
+
   PrincipalAccountSandbox:
     Type: AWS::ServiceCatalog::PortfolioPrincipalAssociation
     Properties: 
@@ -51,7 +65,6 @@ Resources:
       PortfolioId: !Ref SandboxAccountPortfolio
       PrincipalARN: !Ref ArnRoleServiceCatalogSSO
       PrincipalType: IAM
-
 #Constraint for Launch a Product inside a Portfolio. This enable a Role that don't have access to create resources be able to create
   ConstraintLaunchRole:
     Type: AWS::ServiceCatalog::LaunchRoleConstraint
