@@ -51,8 +51,8 @@ accounts:
       - "Rule: aws-controltower-ConfigComplianceChangeEventRule"
       - "Rule: Sandbox-MonitoringEventRule"
       CloudWatchEventsTarget:
-      - "Rule: aws-controltower-ConfigComplianceChangeEventRule"
-      - "Rule: Sandbox-MonitoringEventRule"
+      - "Target ID: ExecuteCWE"
+      - "Target ID: Compliance-Change-Topic"
       SNSTopic:
       - "TopicARN: arn:aws:sns:us-east-1:000000000000:aws-controltower-SecurityNotifications"
       - "TopicARN: arn:aws:sns:us-east-1:000000000000:Sandbox-SNSTopic"
