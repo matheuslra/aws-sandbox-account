@@ -4,13 +4,13 @@ Description: Create service catalog on the master account
 Parameters:
   ArnRoleServiceCatalogSSO:
     Type: String
-    Description: "Put the ARN of role ServiceCatalogEndUserAccess provide by SSO. Format arn:aws:iam::ID-ACCOUNT:role/aws-reserved/sso.amazonaws.com/AWSReservedSSO_AWSServiceCatalogEndUserAccess_f19e0564a782aa46"
+    Description: "Put the ARN of role ServiceCatalogEndUserAccess provide by SSO. Format arn:aws:iam::ID-ACCOUNT:role/aws-reserved/sso.amazonaws.com/AWSReservedSSO_AWSServiceCatalogEndUserAccess_f19e0564a782aa46. Hint: You can get this on IAM->Roles."
     AllowedPattern: ".+"
     ConstraintDescription: "Provide the ARN role"
 
   ArnRoleAdmin:
     Type: String
-    Description: "Put the ARN of role ServiceCatalogEndUserAccess provide by SSO. Format arn:aws:iam::ID-ACCOUNT:role/aws-reserved/sso.amazonaws.com/AWSReservedSSO_AWSAdministratorAccess_db6fa9bde90081f26"
+    Description: "Put the ARN of role AdministratorAccess provide by SSO. Format arn:aws:iam::ID-ACCOUNT:role/aws-reserved/sso.amazonaws.com/AWSReservedSSO_AWSAdministratorAccess_db6fa9bde90081f26. Hint: You can get this on IAM->Roles."
     AllowedPattern: ".+"
     ConstraintDescription: "Provide the ARN role"
 
