@@ -59,6 +59,13 @@ accounts:
       - "TopicARN: arn:aws:sns:sa-east-1:000000000000:Sandbox-SNSTopic"
       ConfigServiceDeliveryChannel:
       - "aws-controltower-BaselineConfigDeliveryChannel"
+      IAMRolePolicy:
+      - "AWSControlTowerExecution -> AdministratorAccess"
+      - "RoleForCodeBuildSandbox -> AdministratorAccess"
+      - "RoleForLambdaAccessResources -> LambdaAccess"
+      - "RoleForStepFunctionSandboxAccount -> PolicyforStepFunction"
+      - "aws-controltower-ForwardSnsNotificationRole -> sns"
+      - "aws-controltower-CloudWatchLogsRole -> cloudtrail-policy"
       IAMRole:
       - "RoleForLambdaFullAccess"
       - "aws-controltower-AdministratorExecutionRole"
