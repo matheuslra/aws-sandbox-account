@@ -15,6 +15,7 @@ resource-types:
   - EC2TGW
   - EC2TGWAttachment
   - EC2InternetGateway
+  - EC2CustomerGateway
   - EC2InternetGatewayAttachment
   - EC2NATGateway
   - EC2NetworkACL
