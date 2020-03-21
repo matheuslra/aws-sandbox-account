@@ -13,15 +13,15 @@ Parameters:
     AllowedPattern: ".+"
     ConstraintDescription: "Provide the account id"
 
-  AdministrationRole:
-    Description: "Insert the name of the ControlTowerStackSetRole. Format arn:aws:iam::MASTER-ACCOUNT-ID:role/service-role/AWSControlTowerStackSetRole"
-    Type: String
-    Default: "arn:aws:iam::869122752574:role/service-role/AWSControlTowerStackSetRole"
+  # AdministrationRole:
+  #   Description: "Insert the name of the ControlTowerStackSetRole. Format arn:aws:iam::MASTER-ACCOUNT-ID:role/service-role/AWSControlTowerStackSetRole"
+  #   Type: String
+  #   Default: "arn:aws:iam::869122752574:role/service-role/AWSControlTowerStackSetRole"
   
-  ExecutionRole:
-    Description: The name of the Role to be assumed within each account
-    Type: String
-    Default: "AWSControlTowerExecution"
+  # ExecutionRole:
+  #   Description: The name of the Role to be assumed within each account
+  #   Type: String
+  #   Default: "AWSControlTowerExecution"
 
   StackRegion:
     Description: "Stack Region"
@@ -94,45 +94,45 @@ Resources:
               - "sts:AssumeRole"
       Path: "/"
       Policies:
-      # - PolicyName: LambdaAccessS3GetOject
-      #   PolicyDocument:
-      #     Version: '2012-10-17'
-      #     Statement:
-      #       Effect: Allow
-      #       Action: "s3:GetObject"
-      #       Resource: "arn:aws:s3:::*/*"
+      - PolicyName: LambdaAccessS3GetOject
+        PolicyDocument:
+          Version: '2012-10-17'
+          Statement:
+            Effect: Allow
+            Action: "s3:GetObject"
+            Resource: "arn:aws:s3:::*/*"
       - PolicyName: LambdaAccessCloudFormation
         PolicyDocument:
           Version: '2012-10-17'
           Statement:
             Effect: Allow
             Action: 
-              - '*'
+              - cloudformation:*
             Resource: "*"
-      # - PolicyName: LambdaAccessOrganizations
-      #   PolicyDocument:
-      #     Version: '2012-10-17'
-      #     Statement:
-      #       Effect: Allow
-      #       Action: 
-      #         - organizations:*
-      #       Resource: "*"
-      # - PolicyName: LambdaAcessForLambda
-      #   PolicyDocument:
-      #     Version: '2012-10-17'
-      #     Statement:
-      #       Effect: Allow
-      #       Action: 
-      #         - lambda:*
-      #       Resource: "*"
-      # - PolicyName: LambdaAccessForCloudWatch
-      #   PolicyDocument:
-      #     Version: '2012-10-17'
-      #     Statement:
-      #       Effect: Allow
-      #       Action:
-      #         - logs:*
-      #       Resource: arn:aws:logs:*:*:*
+      - PolicyName: LambdaAccessOrganizations
+        PolicyDocument:
+          Version: '2012-10-17'
+          Statement:
+            Effect: Allow
+            Action: 
+              - organizations:*
+            Resource: "*"
+      - PolicyName: LambdaAcessForLambda
+        PolicyDocument:
+          Version: '2012-10-17'
+          Statement:
+            Effect: Allow
+            Action: 
+              - lambda:*
+            Resource: "*"
+      - PolicyName: LambdaAccessForCloudWatch
+        PolicyDocument:
+          Version: '2012-10-17'
+          Statement:
+            Effect: Allow
+            Action:
+              - logs:*
+            Resource: arn:aws:logs:*:*:*
   
   AccountSandboxLambda:
     Type: "AWS::Lambda::Function"
@@ -150,8 +150,8 @@ Resources:
           'accountid' : !Ref AccountIdSandbox
           'stackname' : !Join ["-", ["SandboxStackSet", !Ref AccountIdSandbox]]
           'stackregion' : !Ref StackRegion
-          'executionrole' : !Ref ExecutionRole
-          'administrationrole': !Ref AdministrationRole
+          'executionrole' : AWSControlTowerExecution
+          'administrationrole': !Join ["::", [arn:aws:iam::", !Ref AWS::AccountId:role/service-role/AWSControlTowerStackSetRole]]
           'sourcebucket' : masterbuilder-account-sandbox
           'accountsandboxtemplate': account-sandbox-template.yaml
           'accountdays': !Ref DaysForAccount

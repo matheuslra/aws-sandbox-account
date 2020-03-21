@@ -68,8 +68,6 @@ Resources:
 #Constraint for Launch a Product inside a Portfolio. This enable a Role that don't have access to create resources be able to create
   ConstraintLaunchRole:
     Type: AWS::ServiceCatalog::LaunchRoleConstraint
-    DependsOn:
-      - AdminRole
     Properties: 
       AcceptLanguage: en
       Description: "Constraint for launch Sandbox Account"
