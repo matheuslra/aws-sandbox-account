@@ -11,7 +11,7 @@ Parameters:
     Type: String
     Description: "Put the Account ID of Sandbox account"
     AllowedPattern: ".+"
-    ConstraintDescription: "Provide the account id"
+    ConstraintDescription: "Provide the account id. Hint: Account ID have 12 digits"
 
   # AdministrationRole:
   #   Description: "Insert the name of the ControlTowerStackSetRole. Format arn:aws:iam::MASTER-ACCOUNT-ID:role/service-role/AWSControlTowerStackSetRole"
@@ -33,9 +33,9 @@ Parameters:
 
   AddrEmail:
     Type: String
-    Description: "Add your email for receive notifications"
+    Description: "Add your email for receive future notifications."
     AllowedPattern: ".+"
-    ConstraintDescription: "Must provide a valid email address"
+    ConstraintDescription: "Must provide a valid email address."
 
   BudgetName:
     Type: String
@@ -197,8 +197,6 @@ Resources:
     Type: AWS::Lambda::Function
     DependsOn:
       - LambdaRole
-      - CreateSCP
-      - ExecuteSCPLambdaCustom
     Properties:
       Code:
         S3Bucket: masterbuilder-account-sandbox
