@@ -204,6 +204,7 @@ Resources:
     Type: 'Custom::CustomResource'
     DependsOn:
       - CreateSCPDeploy
+      - ExecuteSCPLambdaCustom
     Properties:
       ServiceToken: !GetAtt 'CreateSCPDeploy.Arn'
       LambdaRegion: !Ref "AWS::Region"
