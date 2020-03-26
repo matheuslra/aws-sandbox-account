@@ -327,7 +327,7 @@ Resources:
 
             alert = sns.publish(
               TopicArn=topic_arn,
-              Message='Falta '+ parametervalue +' para os recursos da conta '+ account_id +' serem deletados.'
+              Message='Missing '+ parametervalue +' for the account '+ account_id +' resources to be deleted.'
               )
       FunctionName: MissingDaysFunction
       Description: "Function for get missing days"
@@ -387,7 +387,7 @@ Resources:
             if int(new_days_updated) <= 1:
               alert = sns.publish(
               TopicArn=topic_arn,
-              Message='Falta '+ new_days_updated +' para os recursos da conta '+ account_id +' serem deletados.'
+              Message='Missing '+ new_days_updated +' for the account '+ account_id +' resources to be deleted.'
               )
             
             return {'Days': int(new_days_updated)}
