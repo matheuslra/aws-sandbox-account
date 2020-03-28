@@ -90,5 +90,9 @@ Resources:
               Service: servicecatalog.amazonaws.com
             Action: sts:AssumeRole
 
-
+Outputs:
+  SandboxAccountPortfolio:
+    Description: "Portfolio for the deploy Sandbox Accout"
+    Value: !Ref SandboxAccountPortfolio
+    
 
