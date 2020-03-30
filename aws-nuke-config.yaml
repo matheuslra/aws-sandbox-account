@@ -28,6 +28,9 @@ resource-types:
   - EC2VPNGatewayAttachment
   - CloudTrailTrail
   - SNSSubscription
+  - IAMRole
+  - IAMRolePolicy
+  
 
 accounts:
   "000000000000":
@@ -60,25 +63,6 @@ accounts:
       - "TopicARN: arn:aws:sns:sa-east-1:000000000000:Sandbox-SNSTopic"
       ConfigServiceDeliveryChannel:
       - "aws-controltower-BaselineConfigDeliveryChannel"
-      IAMRolePolicy:
-      - "AWSControlTowerExecution -> AdministratorAccess"
-      - "RoleForCodeBuildSandbox -> AdministratorAccess"
-      - "RoleForLambdaAccessResources -> LambdaAccess"
-      - "RoleForStepFunctionSandboxAccount -> PolicyforStepFunction"
-      - "aws-controltower-ForwardSnsNotificationRole -> sns"
-      - "aws-controltower-CloudWatchLogsRole -> cloudtrail-policy"
-      IAMRole:
-      - "RoleForLambdaFullAccess"
-      - "aws-controltower-AdministratorExecutionRole"
-      - "aws-controltower-CloudWatchLogsRole"
-      - "aws-controltower-ConfigRecorderRole "
-      - "aws-controltower-ForwardSnsNotificationRole"
-      - "aws-controltower-ReadOnlyExecutionRole"
-      - "AWSControlTowerExecution"
-      - "AWSControlTower_VPCFlowLogsRole"
-      - "RoleForCodeBuildSandbox"
-      - "RoleForLambdaAccessResources"
-      - "RoleForStepFunctionSandboxAccount"
       SFNStateMachine:
       - "arn:aws:states:us-east-1:000000000000:stateMachine:StepFunctionMonitoring"
       - "arn:aws:states:sa-east-1:000000000000:stateMachine:StepFunctionMonitoring"
