@@ -92,7 +92,7 @@ Resources:
 
 Outputs:
   SandboxAccountPortfolio:
-    Description: "Portfolio for the deploy Sandbox Accout"
+    Description: "Portfolio for the deploy Sandbox Account"
     Value: !Ref SandboxAccountPortfolio
     
 

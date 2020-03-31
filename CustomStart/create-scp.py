@@ -18,7 +18,7 @@ def lambda_handler(event, context):
                   policies = client.list_policies(
                       Filter='SERVICE_CONTROL_POLICY'
                     )
-                  policy_name = 'DenyAllOutsideUSandBR'
+                  policy_name = 'SandboxRegions'
                   denypolicyname = [name['Name'] for name in policies['Policies']]
                   denypolicyid = [id['Id'] for id in policies['Policies']]
 
@@ -33,9 +33,9 @@ def lambda_handler(event, context):
                         print("Policy apply in account")
                   else:
                     policy = client.create_policy(
-                      Content='{"Version": "2012-10-17","Statement": [{"Sid": "DenyAllOutsideUSandBR","Effect": "Deny","NotAction": ["iam:*","organizations:*","route53:*","budgets:*","waf:*","cloudfront:*","globalaccelerator:*","importexport:*","support:*"],"Resource": "*","Condition": {"StringNotEquals": {"aws:RequestedRegion": ["us-east-1","sa-east-1"]}}}]}',
+                      Content='{"Version":"2012-10-17","Statement":[{"Sid":"SandboxRegions","Effect":"Deny","NotAction":["iam:*","organizations:*","route53:*","budgets:*","waf:*","cloudfront:*","globalaccelerator:*","importexport:*","support:*","servicequotas:*","directconnect:*"],"Resource":["*"],"Condition":{"StringNotEquals":{"aws:RequestedRegion":["us-east-1","sa-east-1"]}}}]}',
                       Description='Denny all services outsite N.Virginia and South America',
-                      Name='DenyAllOutsideUSandBR',
+                      Name='SandboxRegions',
                       Type='SERVICE_CONTROL_POLICY'
                       )
     
