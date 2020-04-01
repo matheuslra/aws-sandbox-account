@@ -40,7 +40,7 @@ Resources:
         Description: "Feb 2020"
         Name: "Feb 2020"
         Info:
-          LoadTemplateFromURL : "https://raw.githubusercontent.com/matheuslra/aws-sandbox-account/master/mb-start.yaml"
+          LoadTemplateFromURL : "https://raw.githubusercontent.com/matheuslra/aws-sandbox-account/master/sandbox-start.yaml"
 
 #Association between Service Catalog Portfolio and Product
   AccountSandboxAssociation: 
