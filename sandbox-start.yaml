@@ -143,7 +143,7 @@ Resources:
           'executionrole' : AWSControlTowerExecution
           'administrationrole': !Join [":", ["arn:aws:iam:", !Ref "AWS::AccountId", role/service-role/AWSControlTowerStackSetRole]]
           'sourcebucket' : masterbuilder-account-sandbox
-          'accountsandboxtemplate': account-sandbox-template.yaml
+          'accountsandboxtemplate': sandbox-deploy.yaml
           'accountdays': !Ref DaysForAccount
           'increaseec2': !Ref IncreaseLimitEC2
 
