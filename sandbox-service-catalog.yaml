@@ -14,9 +14,20 @@ Parameters:
     AllowedPattern: ".+"
     ConstraintDescription: "Provide the ARN role"
 
-Metadata:
-  AWS::CloudFormation::Interface:
-     ParameterLabels:
+Metadata: 
+  AWS::CloudFormation::Interface: 
+    ParameterGroups: 
+      - 
+        Label: 
+          default: "ARN IAM Role ServiceCatalogEndUser"
+        Parameters: 
+          - ArnRoleServiceCatalogSSO
+      - 
+        Label: 
+          default: "ARN IAM Role Administrator Access"
+        Parameters: 
+          - ArnRoleAdmin
+    ParameterLabels: 
       ArnRoleServiceCatalogSSO:
         default: "Arn of IAM Role for ServiceCatalogEndUserAccess provided by AWS SSO:"
       ArnRoleAdmin:
