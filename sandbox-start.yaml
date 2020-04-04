@@ -42,7 +42,44 @@ Parameters:
     Type: Number
     Description: "Maximum number of vCPUs assigned to the Running On-Demand Standard (A, C, D, H, I, M, R, T, Z) instances. Default to a new account is 5."
     Default: 0
-  
+
+Metadata: 
+  AWS::CloudFormation::Interface:
+    ParameterGroups: 
+      - 
+        Label: 
+          default: "Notifications"
+        Parameters: 
+          - AddrEmail
+      - 
+        Label: 
+          default: "AWS Budgets"
+        Parameters: 
+          - BudgetName
+          - BudgetAmount
+      - 
+        Label: 
+          default: "Parameters for AWS Account Sandbox"
+        Parameters:
+          - AccountIdSandbox
+          - DaysForAccount
+          - IncreaseLimitEC2
+          - StackRegion
+    ParameterLabels: 
+      AddrEmail:
+        default: "Email address to receive all the notifications:"
+      BudgetName:
+        default: "AWS Budgets Name:" 
+      BudgetAmount:
+        default: "How much in USD for this AWS Budgets:"
+      AccountIdSandbox:
+        default: "What is the AWS Account ID for the Sandbox Account:" 
+      DaysForAccount:
+        default: "How many days do you want to resources on Sandbox Account lives:" 
+      IncreaseLimitEC2:
+        default: "How much do you want increase in vCPU of EC2 OnDemand for this Account Sandbox:" 
+      StackRegion:
+        default: "Which Region do you to deploy this solution:" 
 
 Resources:
 #Create a Budget for this specific sandbox account and will trigger a notification when the value will greater than 89%
