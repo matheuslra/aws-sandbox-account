@@ -15,7 +15,7 @@ Parameters:
     ConstraintDescription: "Provide the ARN role"
 
 Metadata: 
-  AWS::CloudFormation::Interface: 
+  AWS::CloudFormation::Interface:
     ParameterGroups: 
       - 
         Label: 
