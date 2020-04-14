@@ -30,6 +30,7 @@ resource-types:
   - SNSSubscription
   - IAMRole
   - IAMRolePolicy
+  - IAMSAMLProvider
   
 
 accounts:
