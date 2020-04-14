@@ -121,13 +121,6 @@ Resources:
               - "sts:AssumeRole"
       Path: "/"
       Policies:
-      # - PolicyName: LambdaAccessS3GetOject
-      #   PolicyDocument:
-      #     Version: '2012-10-17'
-      #     Statement:
-      #       Effect: Allow
-      #       Action: "s3:GetObject"
-      #       Resource: "arn:aws:s3:::*/*"
       - PolicyName: LambdaAccessCloudFormation
         PolicyDocument:
           Version: '2012-10-17'
@@ -136,30 +129,6 @@ Resources:
             Action: 
               - "*"
             Resource: "*"
-      # - PolicyName: LambdaAccessOrganizations
-      #   PolicyDocument:
-      #     Version: '2012-10-17'
-      #     Statement:
-      #       Effect: Allow
-      #       Action: 
-      #         - organizations:*
-      #       Resource: "*"
-      # - PolicyName: LambdaAcessForLambda
-      #   PolicyDocument:
-      #     Version: '2012-10-17'
-      #     Statement:
-      #       Effect: Allow
-      #       Action: 
-      #         - lambda:*
-      #       Resource: "*"
-      # - PolicyName: LambdaAccessForCloudWatch
-      #   PolicyDocument:
-      #     Version: '2012-10-17'
-      #     Statement:
-      #       Effect: Allow
-      #       Action:
-      #         - logs:*
-      #       Resource: arn:aws:logs:*:*:*
   
   AccountSandboxLambda:
     Type: "AWS::Lambda::Function"
@@ -177,10 +146,10 @@ Resources:
           'accountid' : !Ref AccountIdSandbox
           'stackname' : !Join ["-", ["SandboxStackSet", !Ref AccountIdSandbox]]
           'stackregion' : !Ref StackRegion
-          'executionrole' : AWSControlTowerExecution
+          'executionrole' : "AWSControlTowerExecution"
           'administrationrole': !Join [":", ["arn:aws:iam:", !Ref "AWS::AccountId", role/service-role/AWSControlTowerStackSetRole]]
-          'sourcebucket' : masterbuilder-account-sandbox
-          'accountsandboxtemplate': sandbox-deploy.yaml
+          'sourcebucket' : "masterbuilder-account-sandbox"
+          'accountsandboxtemplate': "sandbox-deploy.yaml"
           'accountdays': !Ref DaysForAccount
           'increaseec2': !Ref IncreaseLimitEC2
 
