@@ -147,7 +147,7 @@ Resources:
           'stackname' : !Join ["-", ["SandboxStackSet", !Ref AccountIdSandbox]]
           'stackregion' : !Ref StackRegion
           'executionrole' : "AWSControlTowerExecution"
-          'administrationrole': !Join [":", ["arn:aws:iam:", !Ref "AWS::AccountId", role/service-role/AWSControlTowerStackSetRole]]
+          'administrationrole': !Join [":", ["arn:aws:iam:", !Ref "AWS::AccountId", "role/service-role/AWSControlTowerStackSetRole"]]
           'sourcebucket' : "masterbuilder-account-sandbox"
           'accountsandboxtemplate': "sandbox-deploy.yaml"
           'accountdays': !Ref DaysForAccount
