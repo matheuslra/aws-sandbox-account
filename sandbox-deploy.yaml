@@ -184,12 +184,12 @@ Resources:
                       "Next": "List Resources"
                       },{
                       "Variable": "$.MonitoringFunction.Days",
-                      "NumericLessThanEquals": 5,
-                      "Next": "MissingDays"
-                      },{
-                      "Variable": "$.MonitoringFunction.Days",
                       "NumericEquals": 0,
                       "Next": "Delete Account"
+                      },{
+                      "Variable": "$.MonitoringFunction.Days",
+                      "NumericLessThanEquals": 5,
+                      "Next": "MissingDays"
                       },{
                       "Variable": "$.MonitoringFunction.Days",
                       "NumericGreaterThan": 5,
@@ -397,35 +397,6 @@ Resources:
       Role: !GetAtt 'LambdaRole.Arn'
       Runtime: python3.7
       Timeout: 300
-
-
-# Role for CloudWatch Event
-  # CloudWatchEventRole:
-  #   Type: AWS::IAM::Role
-  #   Properties:
-  #     RoleName: RoleForCloudWatchLambda
-  #     AssumeRolePolicyDocument:
-  #       Version: '2012-10-17'
-  #       Statement:
-  #       - 
-  #         Effect: Allow
-  #         Principal:
-  #           Service:
-  #             - events.amazonaws.com
-  #         Action:
-  #             - sts:AssumeRole
-  #     Path: /
-  #     Policies:
-  #     -
-  #       PolicyName: CWEInvokeLambda
-  #       PolicyDocument:
-  #         Version: '2012-10-17'
-  #         Statement:
-  #           -
-  #             Effect: Allow
-  #             Action:
-  #               - lambda:InvokeFunction
-  #             Resource: '*'
 
 #Lambda Function that is the trigger in CloudWatch Event, and on the executition trigger a executition of the StepFunction every day
   ExecuteCWE:
