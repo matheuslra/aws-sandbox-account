@@ -284,7 +284,7 @@ Resources:
 
             parameter = ssm.put_parameter(
               Name='account_days',
-              Value=initial_days,
+              Value=str(initial_days),
               Type='String',
               Overwrite=True
             )
@@ -398,41 +398,6 @@ Resources:
       Runtime: python3.7
       Timeout: 300
 
-#Lambda Function that is the trigger in CloudWatch Event, and on the executition trigger a executition of the StepFunction every day
-  # ExecuteCWE:
-  #   Type: AWS::Lambda::Function
-  #   DependsOn:
-  #     - LambdaRole
-  #     - StepFunctionMonitoring
-  #   Properties:
-  #     Code:
-  #       ZipFile: |
-  #         import boto3
-  #         import random
-  #         import os
-  #         from datetime import datetime
-  #         def create_name():
-  #           """Helper method to generate a unique execution name"""
-  #           return '{}-{}'.format(datetime.now().strftime("%Y%m%d%H%M%s%f"), random.randint(0,9999))
-        
-  #         def lambda_handler(event, context):
-  #           aws_region = os.environ['AWS_REGION']
-  #           client = boto3.client('stepfunctions',region_name=aws_region)
-  #           state_machine = client.list_state_machines()
-  
-  #           for machine in state_machine['stateMachines']:
-  #               arn = machine['stateMachineArn']
-
-  #           response = client.start_execution(
-  #             stateMachineArn=arn,
-  #             name = create_name()
-  #             )
-  #     FunctionName: ExecuteCWE
-  #     Description: "Function for execute cwe"
-  #     Handler: index.lambda_handler
-  #     Role: !GetAtt 'LambdaRole.Arn'
-  #     Runtime: python3.7
-  #     Timeout: 300
   RoleCWE:
     Type: AWS::IAM::Role
     Properties:
