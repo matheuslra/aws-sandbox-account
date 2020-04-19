@@ -282,9 +282,11 @@ Resources:
                 Name='account_initial'
             )
 
+            parameter_new = initial_days['Parameter']['Value']
+
             parameter = ssm.put_parameter(
               Name='account_days',
-              Value=str(initial_days),
+              Value=str(parameter_new),
               Type='String',
               Overwrite=True
             )
