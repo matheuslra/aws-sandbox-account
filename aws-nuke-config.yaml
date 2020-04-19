@@ -29,8 +29,11 @@ resource-types:
   - CloudTrailTrail
   - SNSSubscription
   - IAMRole
+  - IAMInstanceProfile
   - IAMRolePolicy
   - IAMSAMLProvider
+  - IAMPolicy
+  - IAMRolePolicyAttachment
   
 
 accounts:
