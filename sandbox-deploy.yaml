@@ -271,9 +271,28 @@ Resources:
       Code:
         ZipFile: |
           import boto3
+          import random
+          import string
+          def randomString2(stringLength=8):
+            letters = string.ascii_lowercase
+            return ''.join(random.sample(letters, stringLength))
+
           def lambda_handler(event, context):
             client = boto3.client('codebuild')
             ssm = boto3.client('ssm')
+            iam = boto3.client('iam')
+
+            list_alias = iam.list_account_aliases()
+            
+            aliases = list_alias['AccountAliases']
+            print(aliases)
+    
+            if not aliases:
+                account_alias = randomString2(8)
+                put_alias = iam.create_account_alias(
+                    AccountAlias=account_alias
+                )
+                
             response = client.start_build(
               projectName='AccountNuker-Delete'
             )
@@ -443,18 +462,6 @@ Resources:
           Arn: !Ref StepFunctionMonitoring
           Id: "StepFunctionMonitoring"
           RoleArn: !GetAtt RoleCWE.Arn
-
-  # PermissionForEventsToInvokeLambda: 
-  #   Type: AWS::Lambda::Permission
-  #   Properties: 
-  #     FunctionName: 
-  #       Ref: "ExecuteCWE"
-  #     Action: "lambda:InvokeFunction"
-  #     Principal: "events.amazonaws.com"
-  #     SourceArn: 
-  #       Fn::GetAtt: 
-  #         - "CloudWatchEvent"
-  #         - "Arn"
 
 #CodeBuild for AWS-NUKE
   NukeScriptProjectRole:
