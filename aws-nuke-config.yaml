@@ -92,7 +92,7 @@ accounts:
         value: "IncreaseLimitEC2Function"
       - property: Name
         type: exact
-        value: "aws-controltower-NotificationForwarder "       
+        value: "aws-controltower-NotificationForwarder"       
       SSMParameter:
       - "account_id"
       - "account_days"
