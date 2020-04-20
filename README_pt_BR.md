@@ -1,6 +1,6 @@
-# Sandbox Account - Serverless solution for ephemeral resources
+# Sandbox Account - Solução serverless para recursos efemeros
 
-Em [Português](README_pt_BR.md)
+In English [English](README.md)
 
 This is a project for enable aws accounts to sandbox
 
