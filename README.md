@@ -9,7 +9,7 @@ This is a project for enable aws accounts to sandbox
 This project includes the AWS CloudFormation scripts to create, configure, build and deploy a Service Catalog product.
 
 From this product you can deploy this architecture:
-! [architecture](images/Architecture.png)
+![architecture](images/Architecture.png)
 
 
 ## Quick links
@@ -30,7 +30,7 @@ Cost of this solution is around US$ 5.60 per account/month (us-east-1 / North Vi
 |Deploy | Region |
 |:---:|:---:|
 |[![launch stack](/images/launch_stack_button.png)][us-east-1-account-sandbox] | US East (N. Virginia)|
-|[![launch stack](/images/launch_stack_button.png)][sa-east-1-account-sandbox | SA East (São Paulo)|
+|[![launch stack](/images/launch_stack_button.png)][sa-east-1-account-sandbox] | SA East (São Paulo)|
 
 
 [us-east-1-account-sandbox]: https://console.aws.amazon.com/cloudformation/home?region=us-east-1#/stacks/new?stackName=Sandbox-ServiceCatalog=https://s3.amazonaws.com/masterbuilder-account-sandbox/sandbox-service-catalog.yaml
