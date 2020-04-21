@@ -33,5 +33,5 @@ Cost of this solution is around US$ 5.60 per account/month (us-east-1 / North Vi
 |[![launch stack](/images/launch_stack_button.png)][sa-east-1-account-sandbox] | SA East (São Paulo)|
 
 
-[us-east-1-account-sandbox]: https://console.aws.amazon.com/cloudformation/home?region=us-east-1#/stacks/new?stackName=Sandbox-ServiceCatalog=https://s3.amazonaws.com/masterbuilder-account-sandbox/sandbox-service-catalog.yaml
-[sa-east-1-account-sandbox]: https://console.aws.amazon.com/cloudformation/home?region=sa-east-1#/stacks/new?stackName=Sandbox-ServiceCatalog=https://s3.amazonaws.com/masterbuilder-account-sandbox/sandbox-service-catalog.yaml
+[us-east-1-account-sandbox]: https://console.aws.amazon.com/cloudformation/home?region=us-east-1#/stacks/new?stackName=Sandbox-ServiceCatalog=https://masterbuilder-account-sandbox.s3.amazonaws.com/sandbox-service-catalog.yaml
+[sa-east-1-account-sandbox]: https://console.aws.amazon.com/cloudformation/home?region=sa-east-1#/stacks/new?stackName=Sandbox-ServiceCatalog=https://masterbuilder-account-sandbox.s3.amazonaws.com/sandbox-service-catalog.yaml
