@@ -35,8 +35,14 @@ Cost of this solution is around US$ 5.60 per account/month (us-east-1 / North Vi
 |[![launch stack](/images/launch_stack_button.png)][us-east-1-account-sandbox] | US East (N. Virginia)|
 |[![launch stack](/images/launch_stack_button.png)][sa-east-1-account-sandbox] | SA East (São Paulo)|
 
+For fill those parameters to deploy a Service Catalog follow below the description:
+|Parameter | Description |
+|:---:|:---:|
+|ARN IAM Role ServiceCatalogEndUser|This is the ARN of IAM Role provide by ControlTower and belongs to AWS SSO. Use ServiceCatalogEndUser to search in IAM dashboard|
+|ARN IAM Role AdministratorAccess|This is the ARN of IAM Role provide by ControlTower and belongs to AWS SSO. Use AdministratorAccess to search in IAM dashboard|
+
 After deploy the solution, a service catalog will be created and from there you can deploy a solution.
-The Service Catalog will have a product call "Sandbox Account", you can launch it and fullfil the parameters required:
+The Service Catalog will have a product call "Sandbox Account", you can launch it and fill the parameters required:
 
 |Parameter | Description |
 |:---:|:---:|
@@ -47,11 +53,18 @@ The Service Catalog will have a product call "Sandbox Account", you can launch i
 |AWS Account ID| Experimentation Account ID. Note: AWS account has 12 digits, without quotes and without spaces|
 |AWS Region| Region where the resources that monitor the account will be deployed, available to N. Virginia and São Paulo|
 |Amount days lifecycle| This is the number of days that the account's resources existed before being deleted. This parameter is automatically reduced every day.|
+
 ## Using the Solution
 
 ## Troubleshoot
 
 ## Cleanup
+
+To undo an sandbox account simply log into the Control Tower and / or Organizations / Landing Zone master account and access the CloudFormation service:
+
+1. Access the Service Catalog service using the AWS console from the Control Tower master account and access the newly installed `SandboxAccount` product. Once the product is found, it is necessary to execute the Terminate Product function.
+2. Access the Cloudformation service using the AWS console from the Control Tower master account and go to StackSet, click on the stackset that has the name `SandboxStackSet-XXXXXXXXXXXX`, these X being the ID Account of the sandbox account passed as a parameter. until "Actions", then "Delete stacks from StackSet", you will then ask for the number of the AWS Account ID, the region and then click Delete. After making sure that the stack in the sandbox account has been successfully deleted, it will go again in StackSet and delete through the "Actions → Delete StackSet" menu.
+3. Access the Organizations service from the master account and enter SCP or Service Control Policies to list the existing policies. In this case, just select the policies `SandboxRegions` and `SandboxGuardrails` and remove the association of these policies with the ephemeral account.
 
 
 [us-east-1-account-sandbox]: https://console.aws.amazon.com/cloudformation/home?region=us-east-1#/stacks/new?stackName=CreateSC-Sandbox&templateURL=https://masterbuilder-account-sandbox.s3.amazonaws.com/sandbox-service-catalog.yaml
