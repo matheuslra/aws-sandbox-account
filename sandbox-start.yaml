@@ -71,13 +71,13 @@ Metadata:
       BudgetName:
         default: "AWS Budgets Name:" 
       BudgetAmount:
-        default: "How much in USD for this AWS Budgets:"
+        default: "Budget size in USD:"
       AccountIdSandbox:
-        default: "What is the AWS Account ID for the Sandbox Account:" 
+        default: "What is the AWS Account ID *of* the Sandbox Account:" 
       DaysForAccount:
-        default: "How many days do you want to resources on Sandbox Account lives:" 
+        default: "Days between cleanups:" 
       IncreaseLimitEC2:
-        default: "How much do you want increase in vCPU of EC2 OnDemand for this Account Sandbox:" 
+        default: "CPU limit increase for different EC2 families:" 
       StackRegion:
         default: "Which Region do you to deploy this solution:" 
 
