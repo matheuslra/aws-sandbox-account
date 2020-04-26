@@ -4,17 +4,17 @@ Description: CloudFormation template for Sandbox Account
 Parameters:
   DaysForAccount:
     Type: Number
-    Description: "Insert how many days this account will live."
+    Description: "Initial amount of days until cleanup of resources."
     Default: "5"
 
   AccountIdSandbox:
     Type: String
-    Description: "Put the Account ID of Sandbox account"
+    Description: "Account ID of a regular account that will be converted into an experimentation account."
     AllowedPattern: ".+"
     ConstraintDescription: "Provide the account id. Hint: Account ID have 12 digits"
 
   StackRegion:
-    Description: "Stack Region"
+    Description: "Region where it will create the controls inside of the new experimentation account. Recommendation is to use us-east-1 for cost optimisation."
     Default: "us-east-1"
     Type: String
     AllowedPattern: ".+"
@@ -29,7 +29,7 @@ Parameters:
 
   BudgetName:
     Type: String
-    Description: "Insert a name for the budget for this sandbox account."
+    Description: "Name of the new Budget created to help control costs."
     AllowedPattern: ".+"
     ConstraintDescription: "Must provide a valid email address"
 
@@ -40,7 +40,7 @@ Parameters:
   
   IncreaseLimitEC2:
     Type: Number
-    Description: "Maximum number of vCPUs assigned to the Running On-Demand Standard (A, C, D, H, I, M, R, T, Z) instances. Default to a new account is 5."
+    Description: "New maximum amount of vCPUs assigned to the Running On-Demand Standard (A, C, D, H, I, M, R, T, Z) instances. Default to new account is 5."
     Default: 0
 
 Metadata: 
@@ -73,13 +73,13 @@ Metadata:
       BudgetAmount:
         default: "Budget size in USD:"
       AccountIdSandbox:
-        default: "What is the AWS Account ID *of* the Sandbox Account:" 
+        default: " What is the AWS Account ID of the Sandbox Account:" 
       DaysForAccount:
-        default: "Days between cleanups:" 
+        default: "Period in days:" 
       IncreaseLimitEC2:
         default: "CPU limit increase for different EC2 families:" 
       StackRegion:
-        default: "Which Region do you to deploy this solution:" 
+        default: "Solution Deployment Region:" 
 
 Resources:
 #Create a Budget for this specific sandbox account and will trigger a notification when the value will greater than 89%
