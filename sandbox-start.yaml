@@ -23,7 +23,7 @@ Parameters:
 
   AddrEmail:
     Type: String
-    Description: "Add your email for receive future notifications."
+    Description: "Email address that will receive all notifications."
     AllowedPattern: ".+"
     ConstraintDescription: "Must provide a valid email address."
 
@@ -35,7 +35,7 @@ Parameters:
 
   BudgetAmount:
     Type: Number
-    Description: "Add the amount of limit for this specific sandbox account. You will receive a notification when reach 90% of this number."
+    Description: "Please choose an amount in USD for the Budget that will be created for this experimentation account. You will receive an email when your cost reaches 90% of this budget."
     Default: 150
   
   IncreaseLimitEC2:
@@ -67,7 +67,7 @@ Metadata:
           - StackRegion
     ParameterLabels: 
       AddrEmail:
-        default: "Email address to receive all the notifications:"
+        default: "Email address:"
       BudgetName:
         default: "AWS Budgets Name:" 
       BudgetAmount:
